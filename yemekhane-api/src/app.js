@@ -15,6 +15,7 @@ const scanRouter = require('./modules/scan/scan.router');
 const reportsRouter = require('./modules/reports/reports.router');
 const settingsRouter = require('./modules/settings/settings.router');
 const holidaysRouter = require('./modules/holidays/holidays.router');
+const usersRouter = require('./modules/users/users.router');
 
 // Run migrations on startup
 migrate();
@@ -48,6 +49,7 @@ app.use('/api/scan', scanRouter);
 app.use('/api/reports', reportsRouter);
 app.use('/api/settings', settingsRouter);
 app.use('/api/holidays', holidaysRouter);
+app.use('/api/users', usersRouter);
 
 // Health check
 app.get('/api/health', (req, res) => {

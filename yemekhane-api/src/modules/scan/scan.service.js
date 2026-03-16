@@ -109,22 +109,35 @@ function processScan(barcode, mealTypeId, userId) {
   }
 
   // 7. Check monthly quota
-  const staffMealRight = db.prepare(`
-    SELECT monthly_quota FROM staff_meal_rights
-    WHERE staff_id = ? AND meal_type_id = ?
-  `).get(staff.id, mealTypeId);
-
+  const unifiedQuota = getSetting('unified_quota') === 'true';
   const defaultQuota = parseInt(getSetting('monthly_quota') || '22', 10);
-  const monthlyQuota = staffMealRight ? staffMealRight.monthly_quota : defaultQuota;
 
-  // 8. Count monthly usage
-  const monthlyUsage = db.prepare(`
-    SELECT COUNT(*) as count FROM usage_logs
-    WHERE staff_id = ? AND meal_type_id = ? AND strftime('%Y-%m', used_at) = ?
-  `).get(staff.id, mealTypeId, yearMonth);
+  let monthlyQuota;
+  let monthlyUsed;
 
-  const monthlyUsed = monthlyUsage.count;
+  if (unifiedQuota) {
+    // Tüm öğünlerin kullanımı tek havuzdan düşülür
+    monthlyQuota = defaultQuota;
+    const monthlyUsage = db.prepare(`
+      SELECT COUNT(*) as count FROM usage_logs
+      WHERE staff_id = ? AND strftime('%Y-%m', used_at) = ?
+    `).get(staff.id, yearMonth);
+    monthlyUsed = monthlyUsage.count;
+  } else {
+    // Her öğün kendi kotasından düşülür (varsayılan davranış)
+    const staffMealRight = db.prepare(`
+      SELECT monthly_quota FROM staff_meal_rights
+      WHERE staff_id = ? AND meal_type_id = ?
+    `).get(staff.id, mealTypeId);
+    monthlyQuota = staffMealRight ? staffMealRight.monthly_quota : defaultQuota;
+    const monthlyUsage = db.prepare(`
+      SELECT COUNT(*) as count FROM usage_logs
+      WHERE staff_id = ? AND meal_type_id = ? AND strftime('%Y-%m', used_at) = ?
+    `).get(staff.id, mealTypeId, yearMonth);
+    monthlyUsed = monthlyUsage.count;
+  }
 
+  // 8. Kota kontrolü
   if (monthlyUsed >= monthlyQuota) {
     return {
       success: false,

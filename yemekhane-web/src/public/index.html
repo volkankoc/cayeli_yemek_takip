@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yemekhane Takip — Giriş</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body class="login-page">
+  <div class="login-card">
+    <div class="login-logo">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M3 11l19-9-9 19-2-8-8-2z"/>
+      </svg>
+    </div>
+    <h1>Yemekhane Takip</h1>
+    <p class="login-subtitle">Barkod Tarama Sistemi</p>
+
+    <form id="loginForm">
+      <div class="field">
+        <label for="username">Kullanıcı Adı</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="kullanici_adi"
+          autocomplete="username"
+          required
+        />
+      </div>
+      <div class="field">
+        <label for="password">Şifre</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="••••••••"
+          autocomplete="current-password"
+          required
+        />
+      </div>
+
+      <div id="loginError" class="error-msg hidden"></div>
+
+      <button type="submit" id="loginBtn" class="btn-primary">
+        <span id="loginBtnText">Giriş Yap</span>
+        <span id="loginBtnSpinner" class="spinner hidden"></span>
+      </button>
+    </form>
+  </div>
+
+  <script>
+    // Zaten giriş yapılmışsa scan sayfasına yönlendir
+    if (sessionStorage.getItem('token')) {
+      window.location.href = '/scan';
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const btn = document.getElementById('loginBtn');
+      const btnText = document.getElementById('loginBtnText');
+      const spinner = document.getElementById('loginBtnSpinner');
+      const errorDiv = document.getElementById('loginError');
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      btn.disabled = true;
+      btnText.textContent = 'Giriş yapılıyor...';
+      spinner.classList.remove('hidden');
+      errorDiv.classList.add('hidden');
+
+      try {
+        const res = await fetch('/proxy/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          sessionStorage.setItem('token', data.data.token);
+          sessionStorage.setItem('user', JSON.stringify(data.data.user));
+          window.location.href = '/scan';
+        } else {
+          errorDiv.textContent = data.error || 'Giriş başarısız.';
+          errorDiv.classList.remove('hidden');
+        }
+      } catch (err) {
+        errorDiv.textContent = 'Sunucuya bağlanılamadı. API çalışıyor mu?';
+        errorDiv.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btnText.textContent = 'Giriş Yap';
+        spinner.classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+</html>

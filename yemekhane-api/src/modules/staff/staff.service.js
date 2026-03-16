@@ -85,6 +85,7 @@ function update(id, data) {
   const fields = [];
   const params = [];
 
+  if (data.barcode !== undefined) { fields.push('barcode = ?'); params.push(data.barcode); }
   if (data.first_name !== undefined) { fields.push('first_name = ?'); params.push(data.first_name); }
   if (data.last_name !== undefined) { fields.push('last_name = ?'); params.push(data.last_name); }
   if (data.department_id !== undefined) { fields.push('department_id = ?'); params.push(data.department_id); }

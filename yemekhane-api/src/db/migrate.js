@@ -92,6 +92,7 @@ function migrate() {
     ['weekend_restriction', 'false', 'Hafta sonu yemek kısıtlaması'],
     ['session_timeout_hours', '8', 'Oturum zaman aşımı (saat)'],
     ['system_name', 'Yemekhane Takip Sistemi', 'Sistem adı'],
+    ['unified_quota', 'false', 'Yemek haklarını tek havuzdan düş (tüm öğünler toplam kotadan)'],
   ];
 
   const insertMany = db.transaction(() => {

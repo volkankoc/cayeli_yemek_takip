@@ -1,0 +1,18 @@
+{
+  "name": "yemekhane-web",
+  "version": "1.0.0",
+  "description": "Yemekhane Takip - Kamera Barkod Tarama Arayüzü",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.1",
+    "http-proxy-middleware": "^3.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}

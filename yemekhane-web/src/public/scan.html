@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yemekhane Takip — Tarama</title>
+  <link rel="stylesheet" href="/style.css" />
+  <!-- html5-qrcode kütüphanesi -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+</head>
+<body class="scan-page">
+
+  <!-- Üst Bar -->
+  <header class="scan-header">
+    <div class="header-left">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M3 11l19-9-9 19-2-8-8-2z"/>
+      </svg>
+      <span>Yemekhane Takip</span>
+    </div>
+    <div class="header-right">
+      <span id="userInfo" class="user-info"></span>
+      <button id="logoutBtn" class="btn-logout">Çıkış</button>
+    </div>
+  </header>
+
+  <!-- Ana İçerik -->
+  <main class="scan-main">
+
+    <!-- Sol Panel: Kamera -->
+    <div class="camera-panel">
+      <div class="panel-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="6" width="20" height="15" rx="2"/>
+          <circle cx="12" cy="13" r="3"/>
+          <path d="M8 6V4h8v2"/>
+        </svg>
+        Kamera ile Tarama
+      </div>
+
+      <!-- Yemek Tipi Seçici -->
+      <div class="meal-selector">
+        <label for="mealTypeSelect">Yemek Tipi</label>
+        <select id="mealTypeSelect">
+          <option value="">Yükleniyor...</option>
+        </select>
+      </div>
+
+      <!-- Kamera Önizleme -->
+      <div class="camera-wrapper">
+        <div id="cameraPreview"></div>
+        <div class="camera-overlay">
+          <div class="scan-frame"></div>
+        </div>
+        <div id="cameraPlaceholder" class="camera-placeholder">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <rect x="2" y="6" width="20" height="15" rx="2"/>
+            <circle cx="12" cy="13" r="3"/>
+            <path d="M8 6V4h8v2"/>
+          </svg>
+          <span>Kamera kapalı</span>
+        </div>
+      </div>
+
+      <!-- Kamera Kontrolleri -->
+      <div class="camera-controls">
+        <button id="startCameraBtn" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polygon points="10 8 16 12 10 16 10 8"/>
+          </svg>
+          Kamerayı Başlat
+        </button>
+        <button id="stopCameraBtn" class="btn-secondary hidden">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <rect x="9" y="9" width="6" height="6"/>
+          </svg>
+          Durdur
+        </button>
+      </div>
+    </div>
+
+    <!-- Sağ Panel: Manuel Giriş + Sonuç -->
+    <div class="right-panel">
+
+      <!-- Manuel Barkod Girişi -->
+      <div class="manual-panel">
+        <div class="panel-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 6h1v12H4zM7 6h1v12H7zM11 6h2v12h-2zM15 6h1v12h-1zM18 6h2v12h-2z"/>
+          </svg>
+          Manuel Barkod Girişi
+        </div>
+        <div class="manual-form">
+          <input
+            type="text"
+            id="manualBarcode"
+            placeholder="Barkod numarasını girin..."
+            autocomplete="off"
+          />
+          <button id="manualScanBtn" class="btn-primary">
+            Tara
+          </button>
+        </div>
+      </div>
+
+      <!-- Son Tarama Sonucu -->
+      <div class="result-panel" id="resultPanel">
+        <div class="result-idle">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <path d="M4 6h1v12H4zM7 6h1v12H7zM11 6h2v12h-2zM15 6h1v12h-1zM18 6h2v12h-2z"/>
+          </svg>
+          <p>Barkod bekleniyor...</p>
+          <span>Kamerayı başlatın veya manuel girin</span>
+        </div>
+      </div>
+
+      <!-- İstatistik -->
+      <div class="stats-panel">
+        <div class="stat-item">
+          <span class="stat-label">Bugün Toplam</span>
+          <span class="stat-value" id="statToday">—</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Son Tarama</span>
+          <span class="stat-value" id="statLastScan">—</span>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Tam Ekran Sonuç Overlay -->
+  <div id="resultOverlay" class="result-overlay hidden">
+    <div class="overlay-card" id="overlayCard">
+      <div class="overlay-icon" id="overlayIcon"></div>
+      <div class="overlay-name" id="overlayName"></div>
+      <div class="overlay-dept" id="overlayDept"></div>
+      <div class="overlay-meal" id="overlayMeal"></div>
+      <div class="overlay-quota" id="overlayQuota"></div>
+      <div class="overlay-message" id="overlayMessage"></div>
+      <button class="overlay-close" id="overlayClose">Kapat</button>
+      <div class="overlay-countdown" id="overlayCountdown"></div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

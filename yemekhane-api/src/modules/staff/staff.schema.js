@@ -9,6 +9,7 @@ const createStaffSchema = z.object({
 });
 
 const updateStaffSchema = z.object({
+  barcode: z.string().min(1).optional(),
   first_name: z.string().min(1).optional(),
   last_name: z.string().min(1).optional(),
   department_id: z.number().int().positive().optional(),
