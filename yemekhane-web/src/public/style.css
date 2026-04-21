@@ -54,6 +54,14 @@ html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Sego
 .login-card h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem; }
 .login-subtitle { color: var(--text2); font-size: 0.875rem; margin-bottom: 2rem; }
 
+.login-version {
+  margin-top: 1.25rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text2);
+  letter-spacing: 0.03em;
+}
+
 .field { text-align: left; margin-bottom: 1rem; }
 .field label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text2); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em; }
 .field input {
@@ -175,6 +183,18 @@ html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Sego
 .user-info {
   font-size: 0.8rem;
   color: var(--text2);
+}
+
+.header-version {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text2);
+  padding: 0.2rem 0.45rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  white-space: nowrap;
 }
 
 .scan-main {
@@ -536,4 +556,63 @@ html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Sego
     overflow-y: auto;
   }
   .camera-wrapper { min-height: 240px; }
+}
+
+/* ==================== KİOSK (admin ayarları) ==================== */
+body.scan-page.kiosk-large-font {
+  font-size: 1.125rem;
+}
+body.scan-page.kiosk-large-font .scan-header {
+  padding: 1rem 1.5rem;
+}
+body.scan-page.kiosk-large-font .header-left {
+  font-size: 1.2rem;
+}
+body.scan-page.kiosk-large-font .panel-title {
+  font-size: 0.95rem;
+}
+body.scan-page.kiosk-large-font .meal-selector select,
+body.scan-page.kiosk-large-font .manual-form input {
+  font-size: 1.1rem;
+  padding: 0.85rem 1rem;
+}
+body.scan-page.kiosk-large-font .btn-primary,
+body.scan-page.kiosk-large-font .btn-secondary {
+  font-size: 1.05rem;
+  padding: 0.85rem 1.35rem;
+}
+body.scan-page.kiosk-large-font .overlay-name {
+  font-size: 1.85rem;
+}
+body.scan-page.kiosk-large-font .overlay-message {
+  font-size: 1.1rem;
+}
+body.scan-page.kiosk-large-font .quota-num {
+  font-size: 1.85rem;
+}
+body.scan-page.kiosk-large-font .stat-value {
+  font-size: 1.5rem;
+}
+
+body.scan-page.kiosk-high-contrast {
+  --bg: #000000;
+  --bg2: #0a0a0a;
+  --bg3: #141414;
+  --border: #ffffff;
+  --text: #ffffff;
+  --text2: #e0e0e0;
+  --primary: #ffff00;
+  --primary-hover: #eeee00;
+  --success: #00ff66;
+  --error: #ff3366;
+  --warning: #ffcc00;
+}
+body.scan-page.kiosk-high-contrast .scan-frame {
+  border-color: #ffff00;
+  box-shadow: 0 0 0 9999px rgba(0,0,0,0.65);
+}
+body.scan-page.kiosk-high-contrast .overlay-meal {
+  background: rgba(255, 255, 0, 0.2);
+  border-color: #ffff00;
+  color: #000;
 }

@@ -1,8 +1,11 @@
 const Database = require('better-sqlite3');
 const path = require('path');
 const env = require('./env');
+const { applyPendingDatabaseRestore } = require('../utils/restoreAtStartup');
 
 const dbPath = path.resolve(env.DB_PATH);
+applyPendingDatabaseRestore(dbPath);
+
 const db = new Database(dbPath);
 
 // Enable WAL mode for better performance

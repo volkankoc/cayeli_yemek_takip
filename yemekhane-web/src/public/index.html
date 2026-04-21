@@ -47,6 +47,7 @@
         <span id="loginBtnSpinner" class="spinner hidden"></span>
       </button>
     </form>
+    <p id="loginAppVersion" class="login-version" title=""></p>
   </div>
 
   <script>
@@ -54,6 +55,16 @@
     if (sessionStorage.getItem('token')) {
       window.location.href = '/scan';
     }
+
+    fetch('/version.json')
+      .then((r) => r.json())
+      .then((d) => {
+        const el = document.getElementById('loginAppVersion');
+        if (!el || !d.version) return;
+        el.textContent = 'Arayüz v' + d.version;
+        if (d.releaseNotes) el.title = d.releaseNotes;
+      })
+      .catch(() => {});
 
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();

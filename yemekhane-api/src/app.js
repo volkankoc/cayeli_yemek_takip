@@ -7,7 +7,10 @@ const logger = require('./utils/logger');
 const { migrate } = require('./db/migrate');
 const { errorHandler } = require('./middleware/errorHandler');
 const { setupMonthlyReset } = require('./jobs/monthlyReset');
+const { setupDailyBackup } = require('./jobs/dailyBackup');
 const metrics = require('./utils/metrics');
+const { success } = require('./utils/response');
+const { getPublicVersion } = require('./config/versionInfo');
 
 // Import routers
 const authRouter = require('./modules/auth/auth.router');
@@ -21,6 +24,7 @@ const holidaysRouter = require('./modules/holidays/holidays.router');
 const usersRouter = require('./modules/users/users.router');
 const permissionsRouter = require('./modules/permissions/permissions.router');
 const logsRouter = require('./modules/logs/logs.router');
+const backupsRouter = require('./modules/backups/backups.router');
 
 // Run migrations on startup
 migrate();
@@ -60,6 +64,12 @@ app.use('/api/holidays', holidaysRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/permissions', permissionsRouter);
 app.use('/api/logs', logsRouter);
+app.use('/api/backups', backupsRouter);
+
+// Sürüm bilgisi (kimlik doğrulama gerekmez)
+app.get('/api/version', (req, res) => {
+  return success(res, getPublicVersion(), 'Sürüm bilgisi');
+});
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -94,6 +104,7 @@ app.use(errorHandler);
 
 // Setup cron jobs
 setupMonthlyReset();
+setupDailyBackup();
 
 // Start server
 app.listen(env.PORT, () => {

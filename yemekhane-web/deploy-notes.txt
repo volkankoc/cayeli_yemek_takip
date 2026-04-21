@@ -1,0 +1,1 @@
+Tarama ve giriş arayüzü. Deploy sonrası buraya kısa not ekleyebilirsiniz.

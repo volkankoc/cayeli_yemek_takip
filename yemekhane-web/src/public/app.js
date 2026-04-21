@@ -31,6 +31,18 @@ let todayCount = 0;
 let lastScanName = '—';
 let overlayTimer = null;
 let runtimeSettings = { scanner_input_mode: 'camera', offline_queue_enabled: 'true', offline_queue_max_size: '1000' };
+
+async function loadKioskDisplay() {
+  try {
+    const data = await apiFetch('/api/settings/kiosk');
+    if (!data.success || !data.data) return;
+    const b = document.body;
+    b.classList.toggle('kiosk-large-font', data.data.kiosk_large_font === 'true');
+    b.classList.toggle('kiosk-high-contrast', data.data.kiosk_high_contrast === 'true');
+  } catch {
+    /* sessiz */
+  }
+}
 const OFFLINE_QUEUE_KEY = 'offline_scan_queue_v1';
 let activeAdapter = null;
 
@@ -444,8 +456,22 @@ settingsToggleBtn?.addEventListener('click', () => {
 });
 saveSettingsBtn?.addEventListener('click', saveSettingsPanel);
 
+function loadScanAppVersion() {
+  fetch('/version.json')
+    .then((r) => r.json())
+    .then((d) => {
+      const el = document.getElementById('scanAppVersion');
+      if (!el || !d.version) return;
+      el.textContent = 'v' + d.version;
+      if (d.releaseNotes) el.title = d.releaseNotes;
+    })
+    .catch(() => {});
+}
+
 // ── Başlangıç ─────────────────────────────────────────────────
+loadScanAppVersion();
 loadMealTypes();
 updateStats();
+loadKioskDisplay();
 loadSettingsPanel();
 syncOfflineQueue();

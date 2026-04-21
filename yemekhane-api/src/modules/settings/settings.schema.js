@@ -29,6 +29,11 @@ const settingsUpdateSchema = z.object({
   data_retention_days: intString(30, 3650).optional(),
   alert_email: z.string().email().or(z.literal('')).optional(),
   enable_metrics: boolString.optional(),
+  kiosk_large_font: boolString.optional(),
+  kiosk_high_contrast: boolString.optional(),
+  auto_backup_enabled: boolString.optional(),
+  auto_backup_hour: intString(0, 23).optional(),
+  backup_retention_days: intString(1, 365).optional(),
 }).strict();
 
 module.exports = { settingsUpdateSchema };

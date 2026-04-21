@@ -1,0 +1,1 @@
+İlk kurulum / geliştirme ortamı. Bu dosyayı deploy sonrası kısa özetle güncelleyin (en fazla ~2000 karakter API yanıtında döner).

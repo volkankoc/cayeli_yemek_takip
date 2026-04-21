@@ -10,6 +10,20 @@ function getAll(req, res, next) {
   }
 }
 
+/** Tarama ekranı (kiosk) için; giriş yapmış her kullanıcı okuyabilir. */
+function getKiosk(req, res, next) {
+  try {
+    const all = settingsService.getFormatted();
+    const data = {
+      kiosk_large_font: all.kiosk_large_font ?? 'false',
+      kiosk_high_contrast: all.kiosk_high_contrast ?? 'false',
+    };
+    return success(res, data);
+  } catch (err) {
+    next(err);
+  }
+}
+
 function update(req, res, next) {
   try {
     const body = req.body;
@@ -23,4 +37,4 @@ function update(req, res, next) {
   }
 }
 
-module.exports = { getAll, update };
+module.exports = { getAll, getKiosk, update };

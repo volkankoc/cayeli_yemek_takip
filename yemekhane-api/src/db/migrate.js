@@ -143,6 +143,11 @@ function migrate() {
     ['data_retention_days', '365', 'İşlem logları saklama süresi (gün)'],
     ['alert_email', '', 'Kritik alarm e-posta adresi'],
     ['enable_metrics', 'true', 'Metrik endpoint aktif'],
+    ['kiosk_large_font', 'false', 'Tarama ekranı büyük yazı tipi'],
+    ['kiosk_high_contrast', 'false', 'Tarama ekranı yüksek kontrast'],
+    ['auto_backup_enabled', 'true', 'Günlük otomatik SQLite yedeği'],
+    ['auto_backup_hour', '3', 'Otomatik yedek saati (0–23, sunucu yerel saati)'],
+    ['backup_retention_days', '14', 'Yedek dosyalarını saklama süresi (gün)'],
   ];
 
   const insertMany = db.transaction(() => {
