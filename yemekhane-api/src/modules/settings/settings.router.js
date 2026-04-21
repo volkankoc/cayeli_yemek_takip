@@ -1,10 +1,10 @@
 const { Router } = require('express');
 const settingsController = require('./settings.controller');
-const { authenticate, requireAdmin } = require('../../middleware/auth');
+const { authenticate, requirePermission } = require('../../middleware/auth');
 
 const router = Router();
 
-router.get('/', authenticate, settingsController.getAll);
-router.put('/', authenticate, requireAdmin, settingsController.update);
+router.get('/', authenticate, requirePermission('settings.read'), settingsController.getAll);
+router.put('/', authenticate, requirePermission('settings.write'), settingsController.update);
 
 module.exports = router;

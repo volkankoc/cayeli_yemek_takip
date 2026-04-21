@@ -31,7 +31,7 @@ function getById(req, res, next) {
 
 function create(req, res, next) {
   try {
-    const staff = staffService.create(req.body);
+    const staff = staffService.create(req.body, req.user?.id);
     return success(res, staff, 'Personel oluşturuldu', 201);
   } catch (err) {
     if (err.message && err.message.includes('UNIQUE')) {
@@ -47,7 +47,7 @@ function update(req, res, next) {
     if (!existing) {
       return error(res, 'Personel bulunamadı', 404);
     }
-    const staff = staffService.update(req.params.id, req.body);
+    const staff = staffService.update(req.params.id, req.body, req.user?.id);
     return success(res, staff, 'Personel güncellendi');
   } catch (err) {
     next(err);
@@ -60,7 +60,7 @@ function remove(req, res, next) {
     if (!existing) {
       return error(res, 'Personel bulunamadı', 404);
     }
-    staffService.softDelete(req.params.id);
+    staffService.softDelete(req.params.id, req.user?.id);
     return success(res, null, 'Personel pasif yapıldı');
   } catch (err) {
     next(err);
@@ -86,11 +86,56 @@ function updateMealRights(req, res, next) {
     if (!existing) {
       return error(res, 'Personel bulunamadı', 404);
     }
-    const rights = staffService.updateMealRights(req.params.id, req.body.rights);
+    const rights = staffService.updateMealRights(req.params.id, req.body.rights, req.user?.id);
     return success(res, rights, 'Yemek hakları güncellendi');
   } catch (err) {
     next(err);
   }
 }
 
-module.exports = { getAll, getById, create, update, remove, getMealRights, updateMealRights };
+function resetMealRights(req, res, next) {
+  try {
+    const existing = staffService.getById(req.params.id);
+    if (!existing) {
+      return error(res, 'Personel bulunamadı', 404);
+    }
+    const rights = staffService.resetMealRights(req.params.id, req.user?.id);
+    return success(res, rights, 'Personel yemek hakları sıfırlandı');
+  } catch (err) {
+    next(err);
+  }
+}
+
+function bulkImport(req, res, next) {
+  try {
+    const result = staffService.bulkImport(req.body.staff, req.user?.id);
+    return success(res, result, 'Toplu personel içe aktarma tamamlandı');
+  } catch (err) {
+    next(err);
+  }
+}
+
+function uploadPhoto(req, res, next) {
+  try {
+    if (!req.file) {
+      return error(res, 'Fotoğraf dosyası gerekli', 400);
+    }
+    const staff = staffService.savePhoto(req.params.id, req.file, req.user?.id);
+    return success(res, staff, 'Fotoğraf yüklendi');
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = {
+  getAll,
+  getById,
+  create,
+  update,
+  remove,
+  getMealRights,
+  updateMealRights,
+  resetMealRights,
+  bulkImport,
+  uploadPhoto,
+};

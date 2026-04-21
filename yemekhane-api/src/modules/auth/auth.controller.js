@@ -1,5 +1,6 @@
 const authService = require('./auth.service');
 const { success, error } = require('../../utils/response');
+const { clearLoginAttempts } = require('../../middleware/loginRateLimit');
 
 /**
  * POST /api/auth/login
@@ -8,6 +9,7 @@ function login(req, res, next) {
   try {
     const { username, password } = req.body;
     const result = authService.login(username, password);
+    clearLoginAttempts(req);
     return success(res, result, 'Giriş başarılı');
   } catch (err) {
     next(err);

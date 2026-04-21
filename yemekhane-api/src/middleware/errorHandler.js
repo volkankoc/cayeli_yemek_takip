@@ -21,6 +21,9 @@ function errorHandler(err, req, res, _next) {
     success: false,
     error: err.message || 'Sunucu hatası',
   };
+  if (err.details) {
+    response.details = err.details;
+  }
 
   if (env.NODE_ENV === 'development') {
     response.stack = err.stack;

@@ -1,10 +1,13 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
+const fs = require('fs');
 const env = require('./config/env');
 const logger = require('./utils/logger');
 const { migrate } = require('./db/migrate');
 const { errorHandler } = require('./middleware/errorHandler');
 const { setupMonthlyReset } = require('./jobs/monthlyReset');
+const metrics = require('./utils/metrics');
 
 // Import routers
 const authRouter = require('./modules/auth/auth.router');
@@ -16,6 +19,8 @@ const reportsRouter = require('./modules/reports/reports.router');
 const settingsRouter = require('./modules/settings/settings.router');
 const holidaysRouter = require('./modules/holidays/holidays.router');
 const usersRouter = require('./modules/users/users.router');
+const permissionsRouter = require('./modules/permissions/permissions.router');
+const logsRouter = require('./modules/logs/logs.router');
 
 // Run migrations on startup
 migrate();
@@ -30,6 +35,9 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+const imageDir = path.resolve(__dirname, '../../image');
+fs.mkdirSync(imageDir, { recursive: true });
+app.use('/images', express.static(imageDir));
 
 // Request logging
 app.use((req, res, next) => {
@@ -50,6 +58,8 @@ app.use('/api/reports', reportsRouter);
 app.use('/api/settings', settingsRouter);
 app.use('/api/holidays', holidaysRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/permissions', permissionsRouter);
+app.use('/api/logs', logsRouter);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -61,6 +71,13 @@ app.get('/api/health', (req, res) => {
       uptime: process.uptime(),
     },
     message: 'Sunucu çalışıyor',
+  });
+});
+
+app.get('/api/metrics', (req, res) => {
+  res.json({
+    success: true,
+    data: metrics.snapshot(),
   });
 });
 

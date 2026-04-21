@@ -19,6 +19,7 @@
       <span>Yemekhane Takip</span>
     </div>
     <div class="header-right">
+      <button id="settingsToggleBtn" class="btn-secondary hidden">Ayarlar</button>
       <span id="userInfo" class="user-info"></span>
       <button id="logoutBtn" class="btn-logout">Çıkış</button>
     </div>
@@ -128,6 +129,34 @@
         </div>
       </div>
 
+      <section id="settingsPanel" class="manual-panel hidden">
+        <div class="panel-title">Panel Ayarları</div>
+        <div class="settings-grid">
+          <label>Genel Sistem <input id="set_system_name" type="text" /></label>
+          <label>Geçiş Kuralları (Aylık Kota) <input id="set_monthly_quota" type="number" min="1" /></label>
+          <label>Geçiş Cooldown (dk) <input id="set_scan_cooldown_minutes" type="number" min="0" /></label>
+          <label>Kimlik/Barkod Formatları <input id="set_allowed_barcode_formats" type="text" /></label>
+          <label>Yetki/Güvenlik (Login deneme) <input id="set_login_max_attempts" type="number" min="3" /></label>
+          <label>Offline Kuyruk Limiti <input id="set_offline_queue_max_size" type="number" min="100" /></label>
+          <label>Cihaz Modu
+            <select id="set_scanner_input_mode">
+              <option value="camera">camera</option>
+              <option value="keyboard">keyboard</option>
+              <option value="serial">serial</option>
+              <option value="network">network</option>
+            </select>
+          </label>
+          <label>Raporlama (varsayılan gün) <input id="set_report_default_range_days" type="number" min="1" /></label>
+          <label>Metrik Aktif
+            <select id="set_enable_metrics">
+              <option value="true">Açık</option>
+              <option value="false">Kapalı</option>
+            </select>
+          </label>
+        </div>
+        <button id="saveSettingsBtn" class="btn-primary">Ayarları Kaydet</button>
+      </section>
+
     </div>
   </main>
 
@@ -145,6 +174,7 @@
     </div>
   </div>
 
+  <script src="/scanner-adapters.js"></script>
   <script src="/app.js"></script>
 </body>
 </html>

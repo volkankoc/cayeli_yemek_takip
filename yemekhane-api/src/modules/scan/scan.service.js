@@ -1,5 +1,6 @@
 const db = require('../../config/database');
 const logger = require('../../utils/logger');
+const metrics = require('../../utils/metrics');
 
 /**
  * Get a setting value by key
@@ -27,6 +28,7 @@ function processScan(barcode, mealTypeId, userId) {
   `).get(barcode);
 
   if (!staff) {
+    metrics.inc('scan_failure_total');
     return {
       success: false,
       message: 'Personel bulunamadı. Barkod geçersiz.',
@@ -36,6 +38,7 @@ function processScan(barcode, mealTypeId, userId) {
 
   // 2. Check if staff is active
   if (!staff.is_active) {
+    metrics.inc('scan_failure_total');
     return {
       success: false,
       message: 'Personel aktif değil.',
@@ -47,6 +50,7 @@ function processScan(barcode, mealTypeId, userId) {
   // 3. Check meal type exists and is active
   const mealType = db.prepare('SELECT * FROM meal_types WHERE id = ? AND is_active = 1').get(mealTypeId);
   if (!mealType) {
+    metrics.inc('scan_failure_total');
     return {
       success: false,
       message: 'Geçersiz veya aktif olmayan yemek tipi.',
@@ -68,6 +72,7 @@ function processScan(barcode, mealTypeId, userId) {
   // 5. Check weekend restriction
   const weekendRestriction = getSetting('weekend_restriction');
   if ((dayOfWeek === 0 || dayOfWeek === 6) && weekendRestriction === 'true') {
+    metrics.inc('scan_failure_total');
     return {
       success: false,
       message: 'Hafta sonu yemek hizmeti kısıtlanmıştır.',
@@ -94,6 +99,7 @@ function processScan(barcode, mealTypeId, userId) {
       const diffMinutes = diffMs / (1000 * 60);
 
       if (diffMinutes < cooldownMinutes) {
+        metrics.inc('scan_failure_total');
         const remainingMinutes = Math.ceil(cooldownMinutes - diffMinutes);
         return {
           success: false,
@@ -139,6 +145,7 @@ function processScan(barcode, mealTypeId, userId) {
 
   // 8. Kota kontrolü
   if (monthlyUsed >= monthlyQuota) {
+    metrics.inc('scan_failure_total');
     return {
       success: false,
       message: 'Aylık yemek hakkı dolmuştur.',
@@ -161,6 +168,7 @@ function processScan(barcode, mealTypeId, userId) {
   const dailyUsed = getDailyUsage(staff.id, mealTypeId, today);
 
   if (dailyUsed >= mealType.daily_limit) {
+    metrics.inc('scan_failure_total');
     return {
       success: false,
       message: `Günlük ${mealType.name} limiti dolmuştur.`,
@@ -184,6 +192,7 @@ function processScan(barcode, mealTypeId, userId) {
     INSERT INTO usage_logs (staff_id, meal_type_id, created_by_user_id)
     VALUES (?, ?, ?)
   `).run(staff.id, mealTypeId, userId);
+  metrics.inc('scan_success_total');
 
   logger.info(`Scan recorded: Staff ${staff.id} (${staff.first_name} ${staff.last_name}), Meal: ${mealType.name}`, {
     staffId: staff.id,

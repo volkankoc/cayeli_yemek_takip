@@ -30,6 +30,9 @@ let isProcessing = false;   // çift taramayı önler
 let todayCount = 0;
 let lastScanName = '—';
 let overlayTimer = null;
+let runtimeSettings = { scanner_input_mode: 'camera', offline_queue_enabled: 'true', offline_queue_max_size: '1000' };
+const OFFLINE_QUEUE_KEY = 'offline_scan_queue_v1';
+let activeAdapter = null;
 
 // ── DOM refs ──────────────────────────────────────────────────
 const mealTypeSelect  = document.getElementById('mealTypeSelect');
@@ -52,6 +55,9 @@ const statToday       = document.getElementById('statToday');
 const statLastScan    = document.getElementById('statLastScan');
 const cameraPlaceholder = document.getElementById('cameraPlaceholder');
 const cameraWrapper   = document.querySelector('.camera-wrapper');
+const settingsToggleBtn = document.getElementById('settingsToggleBtn');
+const settingsPanel = document.getElementById('settingsPanel');
+const saveSettingsBtn = document.getElementById('saveSettingsBtn');
 
 // ── API yardımcı ──────────────────────────────────────────────
 async function apiFetch(path, options = {}) {
@@ -65,6 +71,45 @@ async function apiFetch(path, options = {}) {
   });
   const data = await res.json();
   return data;
+}
+
+function loadQueue() {
+  try {
+    return JSON.parse(localStorage.getItem(OFFLINE_QUEUE_KEY) || '[]');
+  } catch {
+    return [];
+  }
+}
+
+function saveQueue(items) {
+  localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(items));
+}
+
+function enqueueOfflineScan(payload) {
+  const queue = loadQueue();
+  const maxSize = parseInt(runtimeSettings.offline_queue_max_size || '1000', 10);
+  queue.push({ id: `${Date.now()}-${Math.random()}`, payload, createdAt: new Date().toISOString() });
+  if (queue.length > maxSize) queue.splice(0, queue.length - maxSize);
+  saveQueue(queue);
+}
+
+async function syncOfflineQueue() {
+  if (!navigator.onLine) return;
+  const queue = loadQueue();
+  if (!queue.length) return;
+  const pending = [];
+  for (const item of queue) {
+    try {
+      const resp = await apiFetch('/api/scan', {
+        method: 'POST',
+        body: JSON.stringify(item.payload),
+      });
+      if (!resp.success) pending.push(item);
+    } catch {
+      pending.push(item);
+    }
+  }
+  saveQueue(pending);
 }
 
 // ── Yemek tiplerini yükle ─────────────────────────────────────
@@ -104,9 +149,10 @@ async function processBarcode(barcode) {
   isProcessing = true;
 
   try {
+    const payload = { barcode: barcode.trim(), meal_type_id };
     const data = await apiFetch('/api/scan', {
       method: 'POST',
-      body: JSON.stringify({ barcode: barcode.trim(), meal_type_id }),
+      body: JSON.stringify(payload),
     });
 
     if (data.success) {
@@ -122,10 +168,78 @@ async function processBarcode(barcode) {
       showOverlay('error', staff, mealType, usage, data.error || 'Bilinmeyen hata');
     }
   } catch (e) {
-    showOverlay('error', null, null, null, 'Sunucuya bağlanılamadı.');
+    if (runtimeSettings.offline_queue_enabled === 'true') {
+      enqueueOfflineScan({ barcode: barcode.trim(), meal_type_id });
+      showOverlay('warning', null, null, null, 'Bağlantı yok. Okutma offline kuyruğa alındı.');
+    } else {
+      showOverlay('error', null, null, null, 'Sunucuya bağlanılamadı.');
+    }
   } finally {
     setTimeout(() => { isProcessing = false; }, 1500);
   }
+}
+
+async function loadSettingsPanel() {
+  if (!user || user.role !== 'admin') return;
+  settingsToggleBtn.classList.remove('hidden');
+  const data = await apiFetch('/api/settings');
+  if (!data.success) return;
+  runtimeSettings = { ...runtimeSettings, ...data.data };
+  const map = {
+    set_system_name: 'system_name',
+    set_monthly_quota: 'monthly_quota',
+    set_scan_cooldown_minutes: 'scan_cooldown_minutes',
+    set_allowed_barcode_formats: 'allowed_barcode_formats',
+    set_login_max_attempts: 'login_max_attempts',
+    set_offline_queue_max_size: 'offline_queue_max_size',
+    set_scanner_input_mode: 'scanner_input_mode',
+    set_report_default_range_days: 'report_default_range_days',
+    set_enable_metrics: 'enable_metrics',
+  };
+  for (const [elId, key] of Object.entries(map)) {
+    const el = document.getElementById(elId);
+    if (el) el.value = data.data[key] ?? '';
+  }
+  setupAdapter();
+}
+
+async function saveSettingsPanel() {
+  const payload = {
+    system_name: document.getElementById('set_system_name').value.trim(),
+    monthly_quota: document.getElementById('set_monthly_quota').value,
+    scan_cooldown_minutes: document.getElementById('set_scan_cooldown_minutes').value,
+    allowed_barcode_formats: document.getElementById('set_allowed_barcode_formats').value.trim(),
+    login_max_attempts: document.getElementById('set_login_max_attempts').value,
+    offline_queue_max_size: document.getElementById('set_offline_queue_max_size').value,
+    scanner_input_mode: document.getElementById('set_scanner_input_mode').value,
+    report_default_range_days: document.getElementById('set_report_default_range_days').value,
+    enable_metrics: document.getElementById('set_enable_metrics').value,
+  };
+  const data = await apiFetch('/api/settings', { method: 'PUT', body: JSON.stringify(payload) });
+  if (data.success) {
+    runtimeSettings = { ...runtimeSettings, ...data.data };
+    setupAdapter();
+    alert('Ayarlar güncellendi.');
+  } else {
+    alert(data.error || 'Ayar kaydedilemedi.');
+  }
+}
+
+function setupAdapter() {
+  if (activeAdapter && typeof activeAdapter.stop === 'function') activeAdapter.stop();
+  activeAdapter = null;
+  const mode = runtimeSettings.scanner_input_mode;
+  if (mode === 'network') {
+    activeAdapter = new window.ScannerAdapters.NetworkScannerAdapter(
+      (barcode) => processBarcode(barcode),
+      runtimeSettings.scanner_network_endpoint
+    );
+  } else if (mode === 'serial') {
+    activeAdapter = new window.ScannerAdapters.SerialScannerAdapter((barcode) => processBarcode(barcode));
+  } else if (mode === 'keyboard') {
+    activeAdapter = new window.ScannerAdapters.KeyboardScannerAdapter((barcode) => processBarcode(barcode));
+  }
+  if (activeAdapter && typeof activeAdapter.start === 'function') activeAdapter.start();
 }
 
 // ── Overlay göster ────────────────────────────────────────────
@@ -293,6 +407,13 @@ manualScanBtn.addEventListener('click', () => {
   processBarcode(barcode);
 });
 
+// Keyboard wedge okuyucu desteği
+manualBarcode.addEventListener('input', () => {
+  if (runtimeSettings.scanner_input_mode === 'keyboard' && manualBarcode.value.length >= 6) {
+    manualScanBtn.click();
+  }
+});
+
 manualBarcode.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') {
     manualScanBtn.click();
@@ -312,8 +433,19 @@ window.addEventListener('beforeunload', () => {
   if (isCameraRunning && html5QrCode) {
     html5QrCode.stop().catch(() => {});
   }
+  if (activeAdapter && typeof activeAdapter.stop === 'function') activeAdapter.stop();
 });
+
+window.addEventListener('online', syncOfflineQueue);
+setInterval(syncOfflineQueue, 15000);
+
+settingsToggleBtn?.addEventListener('click', () => {
+  settingsPanel.classList.toggle('hidden');
+});
+saveSettingsBtn?.addEventListener('click', saveSettingsPanel);
 
 // ── Başlangıç ─────────────────────────────────────────────────
 loadMealTypes();
 updateStats();
+loadSettingsPanel();
+syncOfflineQueue();

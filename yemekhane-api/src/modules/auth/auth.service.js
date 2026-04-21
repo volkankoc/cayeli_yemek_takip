@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('../../config/database');
 const env = require('../../config/env');
+const metrics = require('../../utils/metrics');
 
 /**
  * @param {string} username
@@ -12,13 +13,16 @@ function login(username, password) {
   const user = db.prepare('SELECT * FROM users WHERE username = ? AND is_active = 1').get(username);
 
   if (!user) {
+    metrics.inc('login_failure_total');
     throw Object.assign(new Error('Geçersiz kullanıcı adı veya şifre'), { statusCode: 401 });
   }
 
   const isValid = bcrypt.compareSync(password, user.password_hash);
   if (!isValid) {
+    metrics.inc('login_failure_total');
     throw Object.assign(new Error('Geçersiz kullanıcı adı veya şifre'), { statusCode: 401 });
   }
+  metrics.inc('login_success_total');
 
   const token = jwt.sign(
     { id: user.id, username: user.username, role: user.role },

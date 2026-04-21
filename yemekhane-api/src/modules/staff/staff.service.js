@@ -1,4 +1,9 @@
 const db = require('../../config/database');
+const fs = require('fs');
+const path = require('path');
+const { writeAuditLog } = require('../../utils/audit');
+
+const IMAGE_DIR = path.resolve(__dirname, '../../../../image');
 
 /**
  * @param {{ department_id?: number, is_active?: number, search?: string, page?: number, limit?: number }} filters
@@ -72,16 +77,30 @@ function getById(id) {
   return { ...staff, meal_rights: mealRights, current_month_usage: currentMonthUsage };
 }
 
-function create(data) {
+function create(data, actorUserId) {
   const result = db.prepare(`
-    INSERT INTO staff (barcode, first_name, last_name, department_id, photo_url)
-    VALUES (?, ?, ?, ?, ?)
-  `).run(data.barcode, data.first_name, data.last_name, data.department_id, data.photo_url || null);
-
-  return getById(result.lastInsertRowid);
+    INSERT INTO staff (barcode, first_name, last_name, department_id, phone, photo_url)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `).run(data.barcode, data.first_name, data.last_name, data.department_id, data.phone || null, null);
+  const created = getById(result.lastInsertRowid);
+  writeAuditLog({
+    actorUserId,
+    action: 'staff.create',
+    entityType: 'staff',
+    entityId: created.id,
+    details: {
+      barcode: created.barcode,
+      first_name: created.first_name,
+      last_name: created.last_name,
+      department_id: created.department_id,
+      phone: created.phone,
+    },
+  });
+  return created;
 }
 
-function update(id, data) {
+function update(id, data, actorUserId) {
+  const before = getById(id);
   const fields = [];
   const params = [];
 
@@ -89,7 +108,7 @@ function update(id, data) {
   if (data.first_name !== undefined) { fields.push('first_name = ?'); params.push(data.first_name); }
   if (data.last_name !== undefined) { fields.push('last_name = ?'); params.push(data.last_name); }
   if (data.department_id !== undefined) { fields.push('department_id = ?'); params.push(data.department_id); }
-  if (data.photo_url !== undefined) { fields.push('photo_url = ?'); params.push(data.photo_url); }
+  if (data.phone !== undefined) { fields.push('phone = ?'); params.push(data.phone || null); }
   if (data.is_active !== undefined) { fields.push('is_active = ?'); params.push(data.is_active); }
 
   if (fields.length === 0) return getById(id);
@@ -98,11 +117,29 @@ function update(id, data) {
   params.push(id);
 
   db.prepare(`UPDATE staff SET ${fields.join(', ')} WHERE id = ?`).run(...params);
-  return getById(id);
+  const updated = getById(id);
+  writeAuditLog({
+    actorUserId,
+    action: 'staff.update',
+    entityType: 'staff',
+    entityId: id,
+    details: { before, after: updated },
+  });
+  return updated;
 }
 
-function softDelete(id) {
+function softDelete(id, actorUserId) {
+  const before = getById(id);
   db.prepare("UPDATE staff SET is_active = 0, updated_at = datetime('now') WHERE id = ?").run(id);
+  writeAuditLog({
+    actorUserId,
+    action: 'staff.deactivate',
+    entityType: 'staff',
+    entityId: id,
+    details: before
+      ? { first_name: before.first_name, last_name: before.last_name, barcode: before.barcode }
+      : null,
+  });
 }
 
 // --- Meal Rights ---
@@ -116,7 +153,9 @@ function getMealRights(staffId) {
   `).all(staffId);
 }
 
-function updateMealRights(staffId, rights) {
+function updateMealRights(staffId, rights, actorUserId) {
+  const staff = getById(staffId);
+  const before = getMealRights(staffId);
   const deleteMealRights = db.prepare('DELETE FROM staff_meal_rights WHERE staff_id = ?');
   const insertRight = db.prepare(`
     INSERT INTO staff_meal_rights (staff_id, meal_type_id, monthly_quota)
@@ -131,7 +170,96 @@ function updateMealRights(staffId, rights) {
   });
 
   updateAll();
-  return getMealRights(staffId);
+  const after = getMealRights(staffId);
+  writeAuditLog({
+    actorUserId,
+    action: 'staff.meal_rights.update',
+    entityType: 'staff_meal_rights',
+    entityId: staffId,
+    details: {
+      staff: staff ? { first_name: staff.first_name, last_name: staff.last_name, barcode: staff.barcode } : null,
+      before,
+      after,
+    },
+  });
+  return after;
 }
 
-module.exports = { getAll, getById, create, update, softDelete, getMealRights, updateMealRights };
+function resetMealRights(staffId, actorUserId) {
+  const defaultQuota = Number(db.prepare("SELECT value FROM settings WHERE key = 'monthly_quota'").get()?.value || 22);
+  const mealTypes = db.prepare('SELECT id FROM meal_types WHERE is_active = 1').all();
+  const rights = mealTypes.map((mt) => ({ meal_type_id: mt.id, monthly_quota: defaultQuota }));
+  return updateMealRights(staffId, rights, actorUserId);
+}
+
+function bulkImport(staffRows, actorUserId) {
+  const insertStmt = db.prepare(`
+    INSERT INTO staff (barcode, first_name, last_name, department_id, phone, photo_url)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `);
+  const result = { created: 0, skipped: 0, errors: [] };
+  const tx = db.transaction(() => {
+    for (const row of staffRows) {
+      try {
+        const exists = db.prepare('SELECT id FROM staff WHERE barcode = ?').get(row.barcode);
+        if (exists) {
+          result.skipped += 1;
+          continue;
+        }
+        const inserted = insertStmt.run(row.barcode, row.first_name, row.last_name, row.department_id, row.phone || null, null);
+        result.created += 1;
+        writeAuditLog({
+          actorUserId,
+          action: 'staff.create.bulk',
+          entityType: 'staff',
+          entityId: inserted.lastInsertRowid,
+          details: row,
+        });
+      } catch (err) {
+        result.errors.push({ barcode: row.barcode, message: err.message });
+      }
+    }
+  });
+  tx();
+  return result;
+}
+
+function savePhoto(staffId, file, actorUserId) {
+  const staff = getById(staffId);
+  if (!staff) throw Object.assign(new Error('Personel bulunamadı'), { statusCode: 404 });
+  fs.mkdirSync(IMAGE_DIR, { recursive: true });
+  const ext = (path.extname(file.originalname || '') || '.jpg').toLowerCase();
+  const baseName = String(staff.barcode);
+  const allFiles = fs.readdirSync(IMAGE_DIR);
+  for (const f of allFiles) {
+    if (f.startsWith(`${baseName}.`)) {
+      fs.unlinkSync(path.join(IMAGE_DIR, f));
+    }
+  }
+  const fileName = `${baseName}${ext}`;
+  const absoluteFilePath = path.join(IMAGE_DIR, fileName);
+  fs.writeFileSync(absoluteFilePath, file.buffer);
+  const photoUrl = `/images/${fileName}`;
+  db.prepare("UPDATE staff SET photo_url = ?, updated_at = datetime('now') WHERE id = ?").run(photoUrl, staffId);
+  writeAuditLog({
+    actorUserId,
+    action: 'staff.photo.upload',
+    entityType: 'staff',
+    entityId: staffId,
+    details: { fileName },
+  });
+  return getById(staffId);
+}
+
+module.exports = {
+  getAll,
+  getById,
+  create,
+  update,
+  softDelete,
+  getMealRights,
+  updateMealRights,
+  resetMealRights,
+  bulkImport,
+  savePhoto,
+};

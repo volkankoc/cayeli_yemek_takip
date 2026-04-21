@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const db = require('../config/database');
 const { migrate } = require('./migrate');
 
@@ -33,8 +34,10 @@ function seed() {
     INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)
   `);
 
-  const adminHash = bcrypt.hashSync('admin123', 10);
-  const kasiyerHash = bcrypt.hashSync('kasiyer123', 10);
+  const adminPassword = crypto.randomBytes(9).toString('base64url');
+  const kasiyerPassword = crypto.randomBytes(9).toString('base64url');
+  const adminHash = bcrypt.hashSync(adminPassword, 10);
+  const kasiyerHash = bcrypt.hashSync(kasiyerPassword, 10);
 
   insertUser.run('admin', adminHash, 'admin');
   insertUser.run('kasiyer', kasiyerHash, 'user');
@@ -99,8 +102,8 @@ function seed() {
   console.log('✓ Staff meal rights seeded');
 
   console.log('\nSeed completed successfully!');
-  console.log('Admin login: admin / admin123');
-  console.log('Kasiyer login: kasiyer / kasiyer123');
+  console.log('Admin login: admin /', adminPassword);
+  console.log('Kasiyer login: kasiyer /', kasiyerPassword);
 }
 
 // Run if called directly

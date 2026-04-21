@@ -16,7 +16,7 @@ function update(req, res, next) {
     if (!body || Object.keys(body).length === 0) {
       return error(res, 'Güncellenecek ayar belirtilmedi', 400);
     }
-    const settings = settingsService.update(body);
+    const settings = settingsService.update(body, req.user?.id);
     return success(res, settings, 'Ayarlar güncellendi');
   } catch (err) {
     next(err);
