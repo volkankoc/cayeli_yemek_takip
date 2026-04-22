@@ -89,6 +89,18 @@ function processScan(barcode, mealTypeId, userId) {
     `).get(staff.id, mealTypeId);
 
     if (lastScan) {
+      const cancellationAfterLastScan = db.prepare(`
+        SELECT id FROM credit_transactions
+        WHERE staff_id = ?
+          AND amount > 0
+          AND note LIKE 'scan_cancel:%'
+          AND datetime(created_at) >= datetime(?)
+        ORDER BY id DESC
+        LIMIT 1
+      `).get(staff.id, lastScan.used_at);
+      if (cancellationAfterLastScan) {
+        // Operator canceled a recent scan; allow immediate re-scan.
+      } else {
       const lastScanTime = new Date(lastScan.used_at + 'Z');
       const diffMs = now.getTime() - lastScanTime.getTime();
       const diffMinutes = diffMs / (1000 * 60);
@@ -103,6 +115,7 @@ function processScan(barcode, mealTypeId, userId) {
           meal_type: { id: mealType.id, name: mealType.name },
           statusCode: 429,
         };
+      }
       }
     }
   }
@@ -283,7 +296,7 @@ function cancelScanRow(row, userId, message) {
       db.prepare(`
         INSERT INTO credit_transactions (staff_id, amount, note, created_by_user_id)
         VALUES (?, ?, ?, ?)
-      `).run(row.staff_id, 1, `scan_cancel:${row.meal_type_name}`, userId || null);
+      `).run(row.staff_id, 1, `scan_cancel:${row.id}:${row.meal_type_name}`, userId || null);
     }
   })();
 

@@ -259,7 +259,7 @@ html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Sego
 .scan-main {
   flex: 1;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
   gap: 1rem;
   padding: 1rem;
   overflow: hidden;
@@ -271,6 +271,10 @@ html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Sego
   flex-direction: column;
   gap: 0.875rem;
   overflow: hidden;
+}
+
+.camera-panel {
+  align-items: stretch;
 }
 
 .panel-title {
@@ -286,40 +290,62 @@ html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Sego
 
 /* ==================== LIGHT MODERN SCAN THEME ==================== */
 body.scan-page {
-  --bg: #f3f6ff;
-  --bg2: #ffffff;
-  --bg3: #edf2ff;
-  --border: #d7e0f5;
-  --text: #0f172a;
-  --text2: #475569;
-  --primary: #4f46e5;
-  --primary-hover: #4338ca;
+  --bg: #fff4ea;
+  --bg2: #fff8f0;
+  --bg3: #ffeede;
+  --border: #f4c9a9;
+  --text: #4a2a17;
+  --text2: #8f5d40;
+  --primary: #f97316;
+  --primary-hover: #ea580c;
   --success: #16a34a;
   --error: #dc2626;
-  --warning: #d97706;
-  background: linear-gradient(180deg, #f7f9ff 0%, #edf2ff 100%);
+  --warning: #ca8a04;
+  background:
+    radial-gradient(40rem 20rem at 8% -10%, rgba(251, 146, 60, 0.24), transparent 60%),
+    radial-gradient(36rem 16rem at 95% 112%, rgba(236, 72, 153, 0.16), transparent 60%),
+    linear-gradient(180deg, #fff9f2 0%, #ffefdd 100%);
   color: var(--text);
 }
 
 body.scan-page .scan-header {
-  background: rgba(255, 255, 255, 0.95);
+  background: color-mix(in oklab, #fff8f0 88%, #ffffff 12%);
   border-bottom: 1px solid var(--border);
-  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.08);
+  box-shadow:
+    12px 12px 26px rgba(209, 134, 82, 0.2),
+    -8px -8px 18px rgba(255, 255, 255, 0.86);
+  border-radius: 16px;
+  margin: 0.55rem 0.75rem 0;
 }
 
 body.scan-page .manual-panel,
 body.scan-page .camera-wrapper,
 body.scan-page .result-panel,
 body.scan-page .stat-item {
-  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.07);
+  border-radius: 22px;
+  border: 1px solid #f0c6a5;
+  background: linear-gradient(145deg, #fff9f2 0%, #fff0e0 100%);
+  box-shadow:
+    12px 12px 24px rgba(201, 137, 95, 0.2),
+    -8px -8px 18px rgba(255, 255, 255, 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 body.scan-page .btn-secondary {
-  background: #f7f9ff;
+  background: linear-gradient(145deg, #fff9f3, #ffe7d0);
+  border: 1px solid #f2c7a5;
+  color: #7c3d18;
 }
 
 body.scan-page .header-version {
-  background: #eef2ff;
+  background: #ffe8d1;
+  color: #7c3d18;
+  border-color: #f2c7a5;
+}
+
+body.scan-page .btn-primary {
+  background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+  box-shadow: 0 8px 20px rgba(249, 115, 22, 0.34);
 }
 
 /* ==================== MEAL SELECTOR ==================== */
@@ -349,9 +375,9 @@ body.scan-page .header-version {
 }
 
 .profile-wrapper {
-  min-height: 220px;
-  max-height: 220px;
-  width: min(240px, 100%);
+  min-height: 200px;
+  max-height: 200px;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -451,6 +477,12 @@ body.scan-page .header-version {
   gap: 0.5rem;
   margin-bottom: 0.75rem;
 }
+
+.settings-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
 .settings-grid label {
   display: flex;
   flex-direction: column;
@@ -524,6 +556,11 @@ body.scan-page .header-version {
   border-radius: 10px;
   padding: 0.55rem 0.7rem;
   background: var(--bg3);
+}
+
+body.scan-page .scan-history-item {
+  border-radius: 14px;
+  background: linear-gradient(145deg, #fff8f1, #ffebd7);
 }
 
 .scan-history-item.ok { border-color: rgba(34, 197, 94, 0.45); }
@@ -821,10 +858,10 @@ body.scan-page.kiosk-high-contrast .overlay-meal {
 .scan-display-page {
   min-height: 100vh;
   background:
-    radial-gradient(80rem 30rem at 15% -10%, rgba(59, 130, 246, 0.16), transparent 60%),
-    radial-gradient(70rem 25rem at 90% 110%, rgba(16, 185, 129, 0.18), transparent 55%),
-    linear-gradient(180deg, #f8fbff 0%, #eef3ff 100%);
-  color: #0f172a;
+    radial-gradient(80rem 30rem at 12% -10%, rgba(251, 146, 60, 0.28), transparent 60%),
+    radial-gradient(75rem 28rem at 95% 112%, rgba(236, 72, 153, 0.2), transparent 58%),
+    linear-gradient(180deg, #fffaf3 0%, #ffedd8 100%);
+  color: #4a2a17;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
@@ -848,7 +885,7 @@ body.scan-page.kiosk-high-contrast .overlay-meal {
   width: 100%;
   max-height: 140px;
   object-fit: contain;
-  filter: drop-shadow(0 8px 18px rgba(15, 23, 42, 0.14));
+  filter: drop-shadow(0 12px 18px rgba(170, 95, 52, 0.28));
 }
 
 .display-header h1 {
@@ -859,12 +896,13 @@ body.scan-page.kiosk-high-contrast .overlay-meal {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
-  color: #0b3b79;
+  color: #9a3412;
+  text-shadow: 0 3px 0 rgba(255, 255, 255, 0.55);
 }
 
 .display-header p {
   text-align: center;
-  color: #14532d;
+  color: #8f5d40;
   font-size: clamp(1rem, 2vw, 1.22rem);
   font-weight: 600;
 }
@@ -881,9 +919,9 @@ body.scan-page.kiosk-high-contrast .overlay-meal {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  border: 1px solid #c7d2fe;
-  color: #3730a3;
-  background: #eef2ff;
+  border: 1px solid #eec1a0;
+  color: #9a3412;
+  background: linear-gradient(145deg, #ffe8d2, #ffddc1);
   border-radius: 999px;
   padding: 0.28rem 0.72rem;
   font-size: 0.78rem;
@@ -892,13 +930,14 @@ body.scan-page.kiosk-high-contrast .overlay-meal {
 
 .display-input-wrap {
   width: min(900px, 92vw);
-  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-  border: 1px solid #dbe2f2;
+  background: linear-gradient(145deg, #fff9f2 0%, #ffeddc 100%);
+  border: 1px solid #efc39f;
   border-radius: 22px;
   padding: 1.1rem 1.1rem 1rem;
   box-shadow:
-    0 12px 30px rgba(15, 23, 42, 0.09),
-    0 2px 0 rgba(79, 70, 229, 0.12) inset;
+    15px 15px 26px rgba(196, 132, 91, 0.24),
+    -8px -8px 18px rgba(255, 255, 255, 0.82),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86);
 }
 
 .display-input-label {
@@ -917,16 +956,16 @@ body.scan-page.kiosk-high-contrast .overlay-meal {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #2563eb;
+  color: #ea580c;
 }
 
 .display-input {
   width: 100%;
   height: 94px;
-  border: 2px solid #c5d3f5;
+  border: 2px solid #efbf98;
   border-radius: 18px;
-  background: #ffffff;
-  color: #0f172a;
+  background: #fffefb;
+  color: #4a2a17;
   padding: 0 1.2rem;
   font-size: clamp(1.5rem, 3.1vw, 2.1rem);
   font-weight: 700;
@@ -935,20 +974,20 @@ body.scan-page.kiosk-high-contrast .overlay-meal {
 
 .display-input:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.12);
+  border-color: #f97316;
+  box-shadow: 0 0 0 5px rgba(249, 115, 22, 0.14);
 }
 
 .display-input-help {
   margin-top: 0.55rem;
-  color: #64748b;
+  color: #8f5d40;
   font-size: 0.95rem;
 }
 
 .display-dialog {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.28);
+  background: rgba(74, 42, 23, 0.28);
   backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
@@ -959,13 +998,13 @@ body.scan-page.kiosk-high-contrast .overlay-meal {
 .display-dialog-card {
   width: min(760px, 90vw);
   border-radius: 24px;
-  background: #ffffff;
-  border: 1px solid #cdd8f6;
+  background: linear-gradient(145deg, #fffaf3, #ffeede);
+  border: 1px solid #edc19d;
   padding: 2.1rem;
   text-align: center;
   box-shadow:
-    0 24px 64px rgba(15, 23, 42, 0.2),
-    0 2px 0 rgba(37, 99, 235, 0.12) inset;
+    0 24px 64px rgba(165, 101, 62, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 .display-dialog-card.success { border-color: rgba(34, 197, 94, 0.7); }

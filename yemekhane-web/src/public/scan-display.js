@@ -10,6 +10,11 @@
   const manualInput = document.getElementById('displayManualInput');
 
   let hideTimer = null;
+  function refocusInput() {
+    if (!manualInput) return;
+    manualInput.focus();
+    manualInput.select?.();
+  }
 
   function showSuccess(payload) {
     clearTimeout(hideTimer);
@@ -21,7 +26,10 @@
     mealEl.textContent = payload.meal_type?.name ? `Öğün: ${payload.meal_type.name}` : '';
     msgEl.textContent = payload.message || 'Giriş başarılı.';
     dialog.classList.remove('hidden');
-    hideTimer = setTimeout(() => dialog.classList.add('hidden'), 5000);
+    hideTimer = setTimeout(() => {
+      dialog.classList.add('hidden');
+      refocusInput();
+    }, 5000);
   }
 
   function showError(payload) {
@@ -34,7 +42,10 @@
     mealEl.textContent = payload.meal_type?.name ? `Öğün: ${payload.meal_type.name}` : '';
     msgEl.textContent = payload.message || 'Giriş başarısız.';
     dialog.classList.remove('hidden');
-    hideTimer = setTimeout(() => dialog.classList.add('hidden'), 3500);
+    hideTimer = setTimeout(() => {
+      dialog.classList.add('hidden');
+      refocusInput();
+    }, 3500);
   }
 
   channel.onmessage = (ev) => {
@@ -62,5 +73,21 @@
     msgEl.textContent = 'Operatör ekranında doğrulanıyor...';
     dialog.classList.remove('hidden');
     manualInput.value = '';
+    refocusInput();
   });
+
+  async function tryAutoFullscreen() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('autofullscreen') !== '1') return;
+    try {
+      if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+        await document.documentElement.requestFullscreen();
+      }
+    } catch {
+      // Browser policy may block fullscreen; user can press F11 manually.
+    }
+  }
+
+  tryAutoFullscreen();
+  refocusInput();
 })();

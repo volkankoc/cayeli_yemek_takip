@@ -67,6 +67,7 @@ const staffPhotoPlaceholder = document.getElementById('staffPhotoPlaceholder');
 const settingsToggleBtn = document.getElementById('settingsToggleBtn');
 const settingsPanel = document.getElementById('settingsPanel');
 const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+const resetSessionBtn = document.getElementById('resetSessionBtn');
 const cancelLastBtn = document.getElementById('cancelLastBtn');
 const openDisplayBtn = document.getElementById('openDisplayBtn');
 const sessionPickerOverlay = document.getElementById('sessionPickerOverlay');
@@ -363,6 +364,19 @@ function renderHistory() {
   });
 }
 
+function resetScanSessionView() {
+  todayCount = 0;
+  lastScanName = '—';
+  scanHistory.length = 0;
+  updateStats();
+  renderHistory();
+  staffPhotoPreview.classList.add('hidden');
+  staffPhotoPreview.src = '';
+  staffPhotoPlaceholder.classList.remove('hidden');
+  staffPhotoPlaceholder.textContent = 'Profil resmi yok';
+  showOverlay('warning', null, null, null, 'Tarama oturumu sıfırlandı.');
+}
+
 async function cancelByUsageId(usageLogId) {
   try {
     const res = await apiFetch('/api/scan/cancel', {
@@ -491,8 +505,34 @@ function updateStats() {
 }
 
 openDisplayBtn?.addEventListener('click', () => {
-  const displayTab = window.open('/scan-display', 'scanDisplayTab');
-  if (displayTab) displayTab.focus();
+  // Target setup:
+  // - Operator display: 1366x768 (primary)
+  // - Guest display: 1024x768 (secondary, right side)
+  const targetWidth = 1024;
+  const targetHeight = 768;
+  const targetLeft = 1366;
+  const targetTop = 0;
+  const features = [
+    `width=${targetWidth}`,
+    `height=${targetHeight}`,
+    `left=${targetLeft}`,
+    `top=${targetTop}`,
+    'noopener=no',
+    'noreferrer=no',
+  ].join(',');
+  const displayTab = window.open('/scan-display?autofullscreen=1', 'scanDisplayTab', features);
+  if (!displayTab) {
+    showOverlay('warning', null, null, null, 'Karşı ekran penceresi açılamadı. Tarayıcı popup engelliyor olabilir.');
+    return;
+  }
+  try {
+    displayTab.moveTo(targetLeft, targetTop);
+    displayTab.resizeTo(targetWidth, targetHeight);
+    displayTab.focus();
+  } catch {
+    // ignore; browser may block move/resize
+  }
+  showOverlay('warning', null, null, null, 'Karşı ekran açıldı. Gerekirse karşı pencerede F11 ile tam ekran yapın.');
 });
 
 cancelLastBtn?.addEventListener('click', async () => {
@@ -569,6 +609,11 @@ settingsToggleBtn?.addEventListener('click', () => {
   settingsPanel.classList.toggle('hidden');
 });
 saveSettingsBtn?.addEventListener('click', saveSettingsPanel);
+resetSessionBtn?.addEventListener('click', () => {
+  const ok = window.confirm('Tarama oturumunu sıfırlamak istediğinize emin misiniz? Bu işlem listedeki oturum kayıtlarını temizler.');
+  if (!ok) return;
+  resetScanSessionView();
+});
 
 function loadScanAppVersion() {
   fetch('/version.json')
