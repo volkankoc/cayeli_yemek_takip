@@ -37,6 +37,7 @@ function migrate() {
       department_id INTEGER REFERENCES departments(id),
       phone TEXT,
       photo_url TEXT,
+      is_institutional INTEGER NOT NULL DEFAULT 0,
       is_active INTEGER DEFAULT 1,
       created_at TEXT DEFAULT (datetime('now')),
       updated_at TEXT DEFAULT (datetime('now'))
@@ -64,6 +65,15 @@ function migrate() {
       meal_type_id INTEGER NOT NULL REFERENCES meal_types(id),
       used_at TEXT DEFAULT (datetime('now')),
       created_by_user_id INTEGER REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS credit_transactions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      staff_id INTEGER NOT NULL REFERENCES staff(id),
+      amount REAL NOT NULL,
+      note TEXT,
+      created_by_user_id INTEGER REFERENCES users(id),
+      created_at TEXT DEFAULT (datetime('now'))
     );
 
     CREATE TABLE IF NOT EXISTS quota_refresh_logs (
@@ -182,6 +192,20 @@ function migrate() {
   const hasPhoneColumn = staffColumns.some((col) => col.name === 'phone');
   if (!hasPhoneColumn) {
     db.exec("ALTER TABLE staff ADD COLUMN phone TEXT");
+  }
+  const hasBalanceColumn = staffColumns.some((col) => col.name === 'balance');
+  if (!hasBalanceColumn) {
+    db.exec("ALTER TABLE staff ADD COLUMN balance REAL NOT NULL DEFAULT 0");
+  }
+  const hasInstitutionalColumn = staffColumns.some((col) => col.name === 'is_institutional');
+  if (!hasInstitutionalColumn) {
+    db.exec("ALTER TABLE staff ADD COLUMN is_institutional INTEGER NOT NULL DEFAULT 0");
+  }
+
+  const mealTypeColumns = db.prepare("PRAGMA table_info('meal_types')").all();
+  const hasMealPriceColumn = mealTypeColumns.some((col) => col.name === 'meal_price');
+  if (!hasMealPriceColumn) {
+    db.exec("ALTER TABLE meal_types ADD COLUMN meal_price REAL NOT NULL DEFAULT 0");
   }
 
   logger.info('Database migrations completed successfully.');

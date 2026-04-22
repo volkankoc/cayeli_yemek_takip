@@ -79,9 +79,17 @@ function getById(id) {
 
 function create(data, actorUserId) {
   const result = db.prepare(`
-    INSERT INTO staff (barcode, first_name, last_name, department_id, phone, photo_url)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `).run(data.barcode, data.first_name, data.last_name, data.department_id, data.phone || null, null);
+    INSERT INTO staff (barcode, first_name, last_name, department_id, phone, photo_url, is_institutional)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    data.barcode,
+    data.first_name,
+    data.last_name,
+    data.department_id,
+    data.phone || null,
+    null,
+    Number(data.is_institutional || 0)
+  );
   const created = getById(result.lastInsertRowid);
   writeAuditLog({
     actorUserId,
@@ -94,6 +102,7 @@ function create(data, actorUserId) {
       last_name: created.last_name,
       department_id: created.department_id,
       phone: created.phone,
+      is_institutional: created.is_institutional,
     },
   });
   return created;
@@ -110,6 +119,7 @@ function update(id, data, actorUserId) {
   if (data.department_id !== undefined) { fields.push('department_id = ?'); params.push(data.department_id); }
   if (data.phone !== undefined) { fields.push('phone = ?'); params.push(data.phone || null); }
   if (data.is_active !== undefined) { fields.push('is_active = ?'); params.push(data.is_active); }
+  if (data.is_institutional !== undefined) { fields.push('is_institutional = ?'); params.push(data.is_institutional); }
 
   if (fields.length === 0) return getById(id);
 
@@ -194,8 +204,8 @@ function resetMealRights(staffId, actorUserId) {
 
 function bulkImport(staffRows, actorUserId) {
   const insertStmt = db.prepare(`
-    INSERT INTO staff (barcode, first_name, last_name, department_id, phone, photo_url)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO staff (barcode, first_name, last_name, department_id, phone, photo_url, is_institutional)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
   `);
   const result = { created: 0, skipped: 0, errors: [] };
   const tx = db.transaction(() => {
@@ -206,7 +216,15 @@ function bulkImport(staffRows, actorUserId) {
           result.skipped += 1;
           continue;
         }
-        const inserted = insertStmt.run(row.barcode, row.first_name, row.last_name, row.department_id, row.phone || null, null);
+        const inserted = insertStmt.run(
+          row.barcode,
+          row.first_name,
+          row.last_name,
+          row.department_id,
+          row.phone || null,
+          null,
+          Number(row.is_institutional || 0)
+        );
         result.created += 1;
         writeAuditLog({
           actorUserId,
@@ -251,6 +269,42 @@ function savePhoto(staffId, file, actorUserId) {
   return getById(staffId);
 }
 
+function topUpBalance(staffId, amount, note, actorUserId) {
+  const staff = getById(staffId);
+  if (!staff) throw Object.assign(new Error('Personel bulunamadı'), { statusCode: 404 });
+  const numeric = Number(amount);
+  if (!Number.isFinite(numeric) || numeric <= 0) {
+    throw Object.assign(new Error('Yüklenecek tutar geçersiz'), { statusCode: 400 });
+  }
+
+  const tx = db.transaction(() => {
+    db.prepare('UPDATE staff SET balance = COALESCE(balance,0) + ?, updated_at = datetime(\'now\') WHERE id = ?')
+      .run(numeric, staffId);
+    db.prepare(`
+      INSERT INTO credit_transactions (staff_id, amount, note, created_by_user_id)
+      VALUES (?, ?, ?, ?)
+    `).run(staffId, numeric, note || null, actorUserId || null);
+  });
+  tx();
+
+  const updated = getById(staffId);
+  writeAuditLog({
+    actorUserId,
+    action: 'staff.balance.topup',
+    entityType: 'staff',
+    entityId: staffId,
+    details: {
+      amount: numeric,
+      note: note || null,
+      balance_after: updated.balance,
+      first_name: updated.first_name,
+      last_name: updated.last_name,
+      barcode: updated.barcode,
+    },
+  });
+  return updated;
+}
+
 module.exports = {
   getAll,
   getById,
@@ -262,4 +316,5 @@ module.exports = {
   resetMealRights,
   bulkImport,
   savePhoto,
+  topUpBalance,
 };

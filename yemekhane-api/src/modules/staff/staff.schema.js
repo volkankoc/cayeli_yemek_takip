@@ -6,6 +6,7 @@ const createStaffSchema = z.object({
   last_name: z.string().min(1, 'Soyisim gerekli'),
   department_id: z.number().int().positive('Geçerli departman ID gerekli'),
   phone: z.string().min(5, 'Cep telefonu geçerli olmalı').max(20).optional().or(z.literal('')),
+  is_institutional: z.number().int().min(0).max(1).optional(),
 });
 
 const updateStaffSchema = z.object({
@@ -15,6 +16,12 @@ const updateStaffSchema = z.object({
   department_id: z.number().int().positive().optional(),
   phone: z.string().min(5).max(20).optional().or(z.literal('')),
   is_active: z.number().int().min(0).max(1).optional(),
+  is_institutional: z.number().int().min(0).max(1).optional(),
+});
+
+const topUpBalanceSchema = z.object({
+  amount: z.number().positive('Yüklenecek kontür 0 dan büyük olmalı'),
+  note: z.string().max(160).optional().or(z.literal('')),
 });
 
 const updateMealRightsSchema = z.object({
@@ -30,4 +37,4 @@ const bulkImportStaffSchema = z.object({
   staff: z.array(createStaffSchema).min(1, 'En az bir personel gerekli'),
 });
 
-module.exports = { createStaffSchema, updateStaffSchema, updateMealRightsSchema, bulkImportStaffSchema };
+module.exports = { createStaffSchema, updateStaffSchema, topUpBalanceSchema, updateMealRightsSchema, bulkImportStaffSchema };

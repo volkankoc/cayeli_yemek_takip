@@ -127,6 +127,24 @@ function uploadPhoto(req, res, next) {
   }
 }
 
+function topUpBalance(req, res, next) {
+  try {
+    const existing = staffService.getById(req.params.id);
+    if (!existing) {
+      return error(res, 'Personel bulunamadı', 404);
+    }
+    const updated = staffService.topUpBalance(
+      req.params.id,
+      req.body.amount,
+      req.body.note || '',
+      req.user?.id
+    );
+    return success(res, updated, 'Kontür yüklendi');
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getAll,
   getById,
@@ -138,4 +156,5 @@ module.exports = {
   resetMealRights,
   bulkImport,
   uploadPhoto,
+  topUpBalance,
 };

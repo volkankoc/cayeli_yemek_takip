@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -13,33 +13,11 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDepartments } from "@/lib/hooks/useDepartments";
-import { useMealTypes } from "@/lib/hooks/useMealTypes";
-import { useSettings } from "@/lib/hooks/useSettings";
-import { createStaff, updateStaffMealRights } from "@/lib/api/staff";
+import { createStaff } from "@/lib/api/staff";
 import { uploadStaffPhoto } from "@/lib/api/staff";
 import { staffSchema, type StaffFormData } from "@/lib/schemas/staff.schema";
-import { cn } from "@/lib/utils";
-import { Loader2, ArrowLeft, AlertCircle, RefreshCcw, Utensils, Coffee, Moon, Zap } from "lucide-react";
+import { Loader2, ArrowLeft, AlertCircle, RefreshCcw } from "lucide-react";
 import Link from "next/link";
-
-const MEAL_TYPE_STYLES: Record<string, { 
-  bg: string; 
-  text: string; 
-  border: string; 
-  icon: any;
-}> = {
-  "Kahvaltı": { bg: "bg-amber-50", text: "text-amber-600", border: "border-amber-100", icon: Coffee },
-  "Öğle": { bg: "bg-orange-50", text: "text-orange-600", border: "border-orange-100", icon: Utensils },
-  "Akşam": { bg: "bg-indigo-50", text: "text-indigo-600", border: "border-indigo-100", icon: Moon },
-  "default": { bg: "bg-slate-50", text: "text-slate-600", border: "border-slate-100", icon: Zap }
-};
-
-const getMealStyle = (name: string) => {
-  if (name.includes("Kahvaltı")) return MEAL_TYPE_STYLES["Kahvaltı"];
-  if (name.includes("Öğle")) return MEAL_TYPE_STYLES["Öğle"];
-  if (name.includes("Akşam")) return MEAL_TYPE_STYLES["Akşam"];
-  return MEAL_TYPE_STYLES["default"];
-};
 
 export default function YeniPersonelPage() {
   const router = useRouter();
@@ -53,17 +31,6 @@ export default function YeniPersonelPage() {
     refetch: refetchDepts 
   } = useDepartments();
   
-  const { 
-    data: mealTypes, 
-    isLoading: isMealTypesLoading,
-    isError: isMealError,
-    refetch: refetchMealTypes 
-  } = useMealTypes();
-  
-  const { data: settings, isLoading: isSettingsLoading } = useSettings();
-  const defaultQuota = parseInt(settings?.monthly_quota || "22", 10);
-
-  const [quotas, setQuotas] = useState<Record<number, number>>({});
   const [photoFile, setPhotoFile] = useState<File | null>(null);
 
   const {
@@ -72,17 +39,10 @@ export default function YeniPersonelPage() {
     formState: { errors },
   } = useForm<StaffFormData>({
     resolver: zodResolver(staffSchema),
+    defaultValues: {
+      is_institutional: 0,
+    },
   });
-
-  useEffect(() => {
-    if (mealTypes) {
-      const initialQuotas: Record<number, number> = {};
-      mealTypes.filter(mt => mt.is_active).forEach(mt => {
-        initialQuotas[mt.id] = defaultQuota;
-      });
-      setQuotas(initialQuotas);
-    }
-  }, [mealTypes, defaultQuota]);
 
   async function onSubmit(data: StaffFormData) {
     setIsSubmitting(true);
@@ -90,14 +50,6 @@ export default function YeniPersonelPage() {
       const staff = await createStaff(data);
       if (photoFile) {
         await uploadStaffPhoto(staff.id, photoFile);
-      }
-      const activeMealTypes = mealTypes?.filter((mt) => mt.is_active) || [];
-      const rights = activeMealTypes.map((mt) => ({
-        meal_type_id: mt.id,
-        monthly_quota: quotas[mt.id] ?? defaultQuota,
-      }));
-      if (rights.length > 0) {
-        await updateStaffMealRights(staff.id, rights);
       }
       toast.success("Personel başarıyla oluşturuldu");
       queryClient.invalidateQueries({ queryKey: ["staff"] });
@@ -110,8 +62,8 @@ export default function YeniPersonelPage() {
     }
   }
 
-  const isLoading = isDeptsLoading || isMealTypesLoading || isSettingsLoading;
-  const isError = isDeptsError || isMealError;
+  const isLoading = isDeptsLoading;
+  const isError = isDeptsError;
 
   return (
     <>
@@ -130,9 +82,9 @@ export default function YeniPersonelPage() {
                 <AlertCircle className="h-10 w-10 text-rose-500" />
                 <div className="space-y-1">
                   <h3 className="font-semibold text-lg text-slate-900">Gerekli veriler yüklenemedi</h3>
-                  <p className="text-slate-500 text-sm">Departman veya yemek tipi listesi alınırken bir hata oluştu.</p>
+                  <p className="text-slate-500 text-sm">Departman listesi alınırken bir hata oluştu.</p>
                 </div>
-                <Button variant="outline" onClick={() => { refetchDepts(); refetchMealTypes(); }} className="active:scale-95 border-rose-200 text-rose-700 hover:bg-rose-50">
+                <Button variant="outline" onClick={() => { refetchDepts(); }} className="active:scale-95 border-rose-200 text-rose-700 hover:bg-rose-50">
                   <RefreshCcw className="mr-2 h-4 w-4" /> Tekrar Dene
                 </Button>
               </div>
@@ -242,62 +194,21 @@ export default function YeniPersonelPage() {
                   </div>
                 </div>
 
-                {/* Meal Rights */}
-                <div className="pt-8 border-t stagger-4 animate-fade-in-up" style={{ animationDelay: '0.25s' }}>
-                  <h3 className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 mb-6">Yemek Hakları (Aylık Kota)</h3>
-                  {isLoading ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <Skeleton className="h-24 w-full rounded-2xl" />
-                      <Skeleton className="h-24 w-full rounded-2xl" />
-                      <Skeleton className="h-24 w-full rounded-2xl" />
-                    </div>
-                  ) : mealTypes && mealTypes.filter((mt) => mt.is_active).length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      {mealTypes
-                        .filter((mt) => mt.is_active)
-                        .map((mt, idx) => {
-                          const style = getMealStyle(mt.name);
-                          const Icon = style.icon;
-                          return (
-                            <div 
-                              key={mt.id} 
-                              className={cn(
-                                "p-5 border rounded-2xl transition-all hover:shadow-lg hover:-translate-y-1 group relative overflow-hidden",
-                                style.bg, style.border
-                              )}
-                              style={{ animationDelay: `${0.3 + idx * 0.05}s` }}
-                            >
-                              <div className="relative z-10 space-y-3">
-                                <div className="flex items-center gap-2">
-                                  <div className={cn("p-1.5 rounded-lg bg-white shadow-sm", style.text)}>
-                                    <Icon className="w-3.5 h-3.5" />
-                                  </div>
-                                  <Label htmlFor={`quota-${mt.id}`} className={cn("text-[10px] font-bold uppercase tracking-wider", style.text)}>
-                                    {mt.name}
-                                  </Label>
-                                </div>
-                                <Input
-                                  id={`quota-${mt.id}`}
-                                  type="number"
-                                  value={quotas[mt.id] ?? defaultQuota}
-                                  onChange={(e) =>
-                                    setQuotas({ ...quotas, [mt.id]: parseInt(e.target.value) || 0 })
-                                  }
-                                  min={0}
-                                  className={cn("bg-transparent border-none p-0 h-8 text-2xl font-black focus-visible:ring-0 focus-visible:ring-offset-0", style.text)}
-                                />
-                              </div>
-                              {/* Decorative background icon */}
-                              <Icon className={cn("absolute -right-4 -bottom-4 w-20 h-20 opacity-[0.03] rotate-12", style.text)} />
-                            </div>
-                          );
-                        })}
-                    </div>
-                  ) : (
-                    <div className="text-sm font-medium text-slate-400 bg-slate-50 p-8 rounded-2xl border border-dashed border-slate-200 text-center animate-fade-in">
-                      Aktif yemek tipi bulunamadı.
-                    </div>
-                  )}
+                <div className="space-y-2 stagger-4 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+                  <Label htmlFor="is_institutional" className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">
+                    Kurum Personeli
+                  </Label>
+                  <select
+                    id="is_institutional"
+                    {...register("is_institutional", { valueAsNumber: true })}
+                    className="w-full h-11 rounded-md border border-slate-200 bg-background px-3 text-sm transition-all hover:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                  >
+                    <option value={0}>Hayır (kontür ile işlem)</option>
+                    <option value={1}>Evet (günde 1 yemek, kontür düşmez)</option>
+                  </select>
+                  <p className="text-xs text-slate-400">
+                    Kurum personeli işaretlenirse bu kişi kontürden bağımsız günde 1 kez okutabilir.
+                  </p>
                 </div>
 
                 <div className="flex gap-4 pt-6 stagger-5 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>

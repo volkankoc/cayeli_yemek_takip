@@ -13,13 +13,11 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getStaffById, updateStaff, updateStaffMealRights } from "@/lib/api/staff";
+import { getStaffById, updateStaff } from "@/lib/api/staff";
 import { uploadStaffPhoto } from "@/lib/api/staff";
 import { getStaffReport } from "@/lib/api/reports";
 import { useDepartments } from "@/lib/hooks/useDepartments";
-import { useMealTypes } from "@/lib/hooks/useMealTypes";
 import { updateStaffSchema, type UpdateStaffFormData } from "@/lib/schemas/staff.schema";
 import { resolveApiAssetUrl } from "@/lib/utils";
 import { Loader2, ArrowLeft } from "lucide-react";
@@ -30,8 +28,6 @@ export default function PersonelDetailPage({ params }: { params: Promise<{ id: s
   const staffId = Number(id);
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
-  const [rightsLoading, setRightsLoading] = useState(false);
-  const [quotas, setQuotas] = useState<Record<number, number>>({});
   const [photoFile, setPhotoFile] = useState<File | null>(null);
 
   const { data: staff, isLoading } = useQuery({
@@ -41,7 +37,6 @@ export default function PersonelDetailPage({ params }: { params: Promise<{ id: s
   });
 
   const { data: departments } = useDepartments();
-  const { data: mealTypes } = useMealTypes();
 
   const now = new Date();
   const { data: staffReport } = useQuery({
@@ -68,13 +63,8 @@ export default function PersonelDetailPage({ params }: { params: Promise<{ id: s
         department_id: staff.department_id,
         phone: staff.phone || "",
         is_active: staff.is_active,
+        is_institutional: staff.is_institutional ?? 0,
       });
-      // Set meal rights quotas
-      const q: Record<number, number> = {};
-      staff.meal_rights?.forEach((mr) => {
-        q[mr.meal_type_id] = mr.monthly_quota;
-      });
-      setQuotas(q);
     }
   }, [staff, reset]);
 
@@ -92,24 +82,6 @@ export default function PersonelDetailPage({ params }: { params: Promise<{ id: s
       toast.error(err.response?.data?.error || "Güncelleme başarısız");
     } finally {
       setLoading(false);
-    }
-  }
-
-  async function saveMealRights() {
-    setRightsLoading(true);
-    try {
-      const rights = Object.entries(quotas).map(([mealTypeId, quota]) => ({
-        meal_type_id: Number(mealTypeId),
-        monthly_quota: quota,
-      }));
-      await updateStaffMealRights(staffId, rights);
-      queryClient.invalidateQueries({ queryKey: ["staff", staffId] });
-      toast.success("Yemek hakları güncellendi");
-    } catch (error: unknown) {
-      const err = error as { response?: { data?: { error?: string } } };
-      toast.error(err.response?.data?.error || "Güncelleme başarısız");
-    } finally {
-      setRightsLoading(false);
     }
   }
 
@@ -152,7 +124,7 @@ export default function PersonelDetailPage({ params }: { params: Promise<{ id: s
         <Tabs defaultValue="bilgiler">
           <TabsList className="mb-4 w-full sm:w-auto flex flex-wrap h-auto gap-1">
             <TabsTrigger value="bilgiler">Bilgiler</TabsTrigger>
-            <TabsTrigger value="haklar">Yemek Hakları</TabsTrigger>
+            <TabsTrigger value="haklar">Kontür Durumu</TabsTrigger>
             <TabsTrigger value="gecmis">Kullanım Geçmişi</TabsTrigger>
           </TabsList>
 
@@ -208,6 +180,19 @@ export default function PersonelDetailPage({ params }: { params: Promise<{ id: s
                         <p className="text-xs text-muted-foreground">Henüz fotoğraf yok; JPG veya PNG yükleyebilirsiniz.</p>
                       )}
                     </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Kurum Personeli</Label>
+                    <select
+                      {...register("is_institutional", { valueAsNumber: true })}
+                      className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+                    >
+                      <option value={0}>Hayır (kontür ile işlem)</option>
+                      <option value={1}>Evet (günde 1 yemek, kontür düşmez)</option>
+                    </select>
+                    <p className="text-xs text-muted-foreground">
+                      Kurum personeli kullanıcılar kontürden bağımsız günde yalnızca 1 kez okutabilir.
+                    </p>
                   </div>
                   <div className="flex items-center gap-3">
                     <Label>Aktif</Label>
@@ -269,46 +254,22 @@ export default function PersonelDetailPage({ params }: { params: Promise<{ id: s
             </Card>
           </TabsContent>
 
-          {/* Tab 2: Meal Rights */}
+          {/* Tab 2: Credit Balance */}
           <TabsContent value="haklar">
             <Card>
               <CardHeader>
-                <CardTitle>Yemek Hakları</CardTitle>
+                <CardTitle>Kontür Durumu</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {mealTypes
-                  ?.filter((mt) => mt.is_active)
-                  .map((mt) => {
-                    const used = staff.current_month_usage?.find((u) => u.meal_type_id === mt.id)?.used || 0;
-                    const quota = quotas[mt.id] ?? 22;
-                    const pct = quota > 0 ? Math.min((used / quota) * 100, 100) : 0;
-
-                    return (
-                      <div key={mt.id} className="space-y-2 p-4 border rounded-lg">
-                        <div className="flex items-center justify-between">
-                          <Label className="text-base font-medium">{mt.name}</Label>
-                          <span className="text-sm text-muted-foreground">
-                            {used} / {quota} kullanım
-                          </span>
-                        </div>
-                        <Progress value={pct} className="h-2" />
-                        <div className="flex items-center gap-3">
-                          <Label className="text-sm">Aylık Kota:</Label>
-                          <Input
-                            type="number"
-                            value={quota}
-                            onChange={(e) => setQuotas({ ...quotas, [mt.id]: parseInt(e.target.value) || 0 })}
-                            className="w-24"
-                            min={0}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                <Button onClick={saveMealRights} disabled={rightsLoading}>
-                  {rightsLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Hakları Kaydet
-                </Button>
+                <div className="rounded-xl border border-indigo-200 bg-indigo-50/60 p-5">
+                  <p className="text-sm text-indigo-700 font-medium">Toplam Kalan Hak</p>
+                  <p className="text-4xl font-bold text-indigo-900 mt-2 tabular-nums">
+                    {Number(staff.balance || 0).toFixed(2)} kontür
+                  </p>
+                  <p className="text-xs text-indigo-700/80 mt-2">
+                    Sistem kuralı: <strong>1 kontür = 1 yemek hakkı</strong>. Her okutma işleminde 1 kontür düşer.
+                  </p>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>

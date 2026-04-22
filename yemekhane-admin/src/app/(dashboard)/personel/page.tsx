@@ -15,7 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useStaffList } from "@/lib/hooks/useStaff";
 import { useDepartments } from "@/lib/hooks/useDepartments";
 import { useDebounce } from "@/lib/hooks/useDebounce";
-import { bulkImportStaff, deleteStaff, resetStaffMealRights, updateStaff } from "@/lib/api/staff";
+import { bulkImportStaff, deleteStaff, topUpStaffBalance, updateStaff } from "@/lib/api/staff";
 import { cn } from "@/lib/utils";
 import {
   Plus,
@@ -111,10 +111,14 @@ export default function PersonelPage() {
     },
     onError: () => toast.error("Silme işlemi başarısız"),
   });
-  const resetRightsMutation = useMutation({
-    mutationFn: (id: number) => resetStaffMealRights(id),
-    onSuccess: () => toast.success("Yemek hakları sıfırlandı"),
-    onError: () => toast.error("Yemek hakları sıfırlanamadı"),
+  const topUpMutation = useMutation({
+    mutationFn: ({ id, amount, note }: { id: number; amount: number; note: string }) =>
+      topUpStaffBalance(id, amount, note),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["staff"] });
+      toast.success("Kontür yüklendi");
+    },
+    onError: () => toast.error("Kontür yüklenemedi"),
   });
   const bulkImportMutation = useMutation({
     mutationFn: (rows: Array<{ barcode: string; first_name: string; last_name: string; department_id: number; phone?: string }>) => bulkImportStaff(rows),
@@ -316,6 +320,7 @@ export default function PersonelPage() {
                       <th className="text-left p-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Ad Soyad</th>
                       <th className="text-left p-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Departman</th>
                       <th className="text-left p-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Barkod</th>
+                      <th className="text-left p-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Kontür</th>
                       <th className="text-left p-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Durum</th>
                       <th className="text-right p-3 text-xs font-semibold uppercase tracking-wider text-slate-500">İşlem</th>
                     </tr>
@@ -333,6 +338,7 @@ export default function PersonelPage() {
                         </td>
                         <td className="p-3 text-sm text-slate-600">{staff.department_name || "-"}</td>
                         <td className="p-3 text-sm font-mono text-slate-600">{staff.barcode}</td>
+                        <td className="p-3 text-sm font-semibold text-indigo-700">{Number(staff.balance || 0).toFixed(2)}</td>
                         <td className="p-3">
                           <Badge variant={staff.is_active ? "default" : "secondary"}>
                             {staff.is_active ? "Aktif" : "Pasif"}
@@ -398,9 +404,19 @@ export default function PersonelPage() {
                   <button
                     type="button"
                     className="block w-full text-left px-2 py-1.5 text-sm rounded hover:bg-slate-50"
-                    onClick={() => resetRightsMutation.mutate(selected.id)}
+                    onClick={() => {
+                      const raw = window.prompt("Yüklenecek kontür miktarı", "50");
+                      if (!raw) return;
+                      const amount = Number(raw.replace(",", "."));
+                      if (!Number.isFinite(amount) || amount <= 0) {
+                        toast.error("Geçerli bir kontür miktarı girin");
+                        return;
+                      }
+                      const note = window.prompt("Not (opsiyonel)", "Nakit ödeme") || "";
+                      topUpMutation.mutate({ id: selected.id, amount, note });
+                    }}
                   >
-                    Yemek Hakkı Sıfırla
+                    Kontür Yükle
                   </button>
                   <button
                     type="button"

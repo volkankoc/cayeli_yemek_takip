@@ -13,7 +13,6 @@ import {
   Building2,
   UtensilsCrossed,
   BarChart3,
-  CalendarDays,
   Settings,
   UserCog,
 } from "lucide-react";
@@ -27,7 +26,6 @@ const menuItems = [
   { href: "/raporlar/gunluk", label: "Günlük Rapor", icon: BarChart3 },
   { href: "/raporlar/aylik", label: "Aylık Rapor", icon: BarChart3 },
   { href: "/raporlar/yillik", label: "Yıllık Rapor", icon: BarChart3 },
-  { href: "/tatiller", label: "Tatiller", icon: CalendarDays },
 ];
 
 const adminItems = [

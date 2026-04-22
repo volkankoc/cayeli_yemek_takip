@@ -155,6 +155,65 @@ html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Sego
 /* ==================== SCAN PAGE ==================== */
 .scan-page { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
+.session-picker-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  background: rgba(8, 10, 16, 0.88);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.session-picker-card {
+  width: min(860px, 100%);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.session-picker-card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.session-picker-card p {
+  color: var(--text2);
+  margin-bottom: 1rem;
+}
+
+.session-meal-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.session-meal-btn {
+  min-height: 100px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg3);
+  color: var(--text);
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 0.1s, border-color 0.15s, background 0.15s;
+}
+
+.session-meal-btn:hover {
+  border-color: var(--primary);
+  background: rgba(79, 142, 247, 0.12);
+}
+
+.session-meal-btn:active {
+  transform: scale(0.98);
+}
+
 .scan-header {
   display: flex;
   align-items: center;
@@ -225,6 +284,44 @@ html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Sego
   color: var(--text2);
 }
 
+/* ==================== LIGHT MODERN SCAN THEME ==================== */
+body.scan-page {
+  --bg: #f3f6ff;
+  --bg2: #ffffff;
+  --bg3: #edf2ff;
+  --border: #d7e0f5;
+  --text: #0f172a;
+  --text2: #475569;
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --success: #16a34a;
+  --error: #dc2626;
+  --warning: #d97706;
+  background: linear-gradient(180deg, #f7f9ff 0%, #edf2ff 100%);
+  color: var(--text);
+}
+
+body.scan-page .scan-header {
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.08);
+}
+
+body.scan-page .manual-panel,
+body.scan-page .camera-wrapper,
+body.scan-page .result-panel,
+body.scan-page .stat-item {
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.07);
+}
+
+body.scan-page .btn-secondary {
+  background: #f7f9ff;
+}
+
+body.scan-page .header-version {
+  background: #eef2ff;
+}
+
 /* ==================== MEAL SELECTOR ==================== */
 .meal-selector { display: flex; flex-direction: column; gap: 0.4rem; }
 .meal-selector label { font-size: 0.8rem; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.05em; }
@@ -250,6 +347,19 @@ html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Sego
   border-radius: var(--radius);
   overflow: hidden;
   min-height: 280px;
+}
+
+.profile-wrapper {
+  min-height: 360px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.staff-photo-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 #cameraPreview {
@@ -375,6 +485,95 @@ html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Sego
 .manual-form input:focus { border-color: var(--primary); }
 .manual-form input::placeholder { color: var(--text2); }
 .manual-form .btn-primary { width: auto; flex-shrink: 0; }
+
+.operator-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.btn-touch {
+  min-height: 52px;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.focus-status {
+  margin-top: 0.55rem;
+  font-size: 0.78rem;
+  color: var(--text2);
+}
+
+.focus-status.focus-warning {
+  color: #fca5a5;
+}
+
+.scan-history-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.scan-history-item {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.55rem 0.7rem;
+  background: var(--bg3);
+}
+
+.scan-history-item.ok { border-color: rgba(34, 197, 94, 0.45); }
+.scan-history-item.err { border-color: rgba(239, 68, 68, 0.45); }
+.scan-history-item.muted { color: var(--text2); font-size: 0.85rem; text-align: center; }
+
+.scan-history-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.scan-history-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.scan-history-time {
+  color: var(--text2);
+  font-size: 0.75rem;
+}
+
+.scan-history-sub {
+  margin-top: 0.15rem;
+  color: var(--text2);
+  font-size: 0.78rem;
+}
+
+.scan-history-cancel-btn {
+  margin-top: 0.45rem;
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  background: rgba(239, 68, 68, 0.08);
+  color: #fca5a5;
+  border-radius: 8px;
+  padding: 0.3rem 0.55rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.scan-history-cancel-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.scan-history-canceled {
+  margin-top: 0.45rem;
+  display: inline-block;
+  color: #fca5a5;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
 
 /* ==================== RESULT PANEL ==================== */
 .result-panel {
@@ -615,4 +814,134 @@ body.scan-page.kiosk-high-contrast .overlay-meal {
   background: rgba(255, 255, 0, 0.2);
   border-color: #ffff00;
   color: #000;
+}
+
+/* ==================== DISPLAY PAGE ==================== */
+.scan-display-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+  color: #0f172a;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.display-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.display-header h1 {
+  font-size: clamp(2rem, 4vw, 3.3rem);
+  letter-spacing: 0.02em;
+  margin-bottom: 0.45rem;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.display-header p {
+  text-align: center;
+  color: #475569;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+}
+
+.display-input-wrap {
+  width: min(900px, 92vw);
+  background: #ffffff;
+  border: 1px solid #dbe2f2;
+  border-radius: 18px;
+  padding: 1rem;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.display-input-label {
+  margin-bottom: 0.5rem;
+  color: #475569;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.display-title-icon,
+.display-label-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #4f46e5;
+}
+
+.display-input {
+  width: 100%;
+  height: 86px;
+  border: 2px solid #cbd5e1;
+  border-radius: 16px;
+  background: #ffffff;
+  color: #0f172a;
+  padding: 0 1.1rem;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+}
+
+.display-input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+}
+
+.display-input-help {
+  margin-top: 0.55rem;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.display-dialog {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.28);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 90;
+}
+
+.display-dialog-card {
+  width: min(760px, 90vw);
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid #dbe2f2;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.18);
+}
+
+.display-dialog-card.success { border-color: rgba(34, 197, 94, 0.7); }
+.display-dialog-card.error { border-color: rgba(239, 68, 68, 0.7); }
+
+.display-dialog-icon {
+  font-size: 3.2rem;
+  margin-bottom: 0.7rem;
+}
+
+.display-dialog-card h2 {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  margin-bottom: 0.35rem;
+}
+
+.display-dialog-card p {
+  margin-bottom: 0.5rem;
+  font-size: clamp(1.05rem, 2.4vw, 1.45rem);
+}
+
+@media (max-width: 900px) {
+  .operator-actions {
+    grid-template-columns: 1fr;
+  }
 }

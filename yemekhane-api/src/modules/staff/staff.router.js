@@ -3,7 +3,7 @@ const multer = require('multer');
 const staffController = require('./staff.controller');
 const { authenticate, requireAdmin } = require('../../middleware/auth');
 const { validate } = require('../../middleware/validate');
-const { createStaffSchema, updateStaffSchema, updateMealRightsSchema, bulkImportStaffSchema } = require('./staff.schema');
+const { createStaffSchema, updateStaffSchema, topUpBalanceSchema, updateMealRightsSchema, bulkImportStaffSchema } = require('./staff.schema');
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
@@ -12,6 +12,7 @@ router.get('/', authenticate, staffController.getAll);
 router.post('/', authenticate, requireAdmin, validate(createStaffSchema), staffController.create);
 router.post('/bulk-import', authenticate, requireAdmin, validate(bulkImportStaffSchema), staffController.bulkImport);
 router.post('/:id/photo', authenticate, requireAdmin, upload.single('photo'), staffController.uploadPhoto);
+router.post('/:id/topup', authenticate, requireAdmin, validate(topUpBalanceSchema), staffController.topUpBalance);
 router.get('/:id', authenticate, staffController.getById);
 router.put('/:id', authenticate, requireAdmin, validate(updateStaffSchema), staffController.update);
 router.delete('/:id', authenticate, requireAdmin, staffController.remove);

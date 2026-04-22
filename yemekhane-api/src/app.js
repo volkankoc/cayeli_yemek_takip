@@ -6,7 +6,6 @@ const env = require('./config/env');
 const logger = require('./utils/logger');
 const { migrate } = require('./db/migrate');
 const { errorHandler } = require('./middleware/errorHandler');
-const { setupMonthlyReset } = require('./jobs/monthlyReset');
 const { setupDailyBackup } = require('./jobs/dailyBackup');
 const metrics = require('./utils/metrics');
 const { success } = require('./utils/response');
@@ -20,7 +19,6 @@ const mealTypesRouter = require('./modules/meal-types/meal-types.router');
 const scanRouter = require('./modules/scan/scan.router');
 const reportsRouter = require('./modules/reports/reports.router');
 const settingsRouter = require('./modules/settings/settings.router');
-const holidaysRouter = require('./modules/holidays/holidays.router');
 const usersRouter = require('./modules/users/users.router');
 const permissionsRouter = require('./modules/permissions/permissions.router');
 const logsRouter = require('./modules/logs/logs.router');
@@ -60,7 +58,6 @@ app.use('/api/meal-types', mealTypesRouter);
 app.use('/api/scan', scanRouter);
 app.use('/api/reports', reportsRouter);
 app.use('/api/settings', settingsRouter);
-app.use('/api/holidays', holidaysRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/permissions', permissionsRouter);
 app.use('/api/logs', logsRouter);
@@ -103,7 +100,6 @@ app.use((req, res) => {
 app.use(errorHandler);
 
 // Setup cron jobs
-setupMonthlyReset();
 setupDailyBackup();
 
 // Start server

@@ -9,7 +9,9 @@ function getById(id) {
 }
 
 function create(name, dailyLimit) {
-  const result = db.prepare('INSERT INTO meal_types (name, daily_limit) VALUES (?, ?)').run(name, dailyLimit);
+  const result = db
+    .prepare('INSERT INTO meal_types (name, daily_limit) VALUES (?, ?)')
+    .run(name, dailyLimit);
   return getById(result.lastInsertRowid);
 }
 

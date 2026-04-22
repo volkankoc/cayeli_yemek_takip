@@ -24,13 +24,15 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
 });
 
 // ── Değişkenler ───────────────────────────────────────────────
-let html5QrCode = null;
-let isCameraRunning = false;
 let isProcessing = false;   // çift taramayı önler
 let todayCount = 0;
 let lastScanName = '—';
 let overlayTimer = null;
 let runtimeSettings = { scanner_input_mode: 'camera', offline_queue_enabled: 'true', offline_queue_max_size: '1000' };
+const scanChannel = new BroadcastChannel('scan-events');
+let keyboardBuffer = '';
+let keyboardBufferTimer = null;
+const scanHistory = [];
 
 async function loadKioskDisplay() {
   try {
@@ -48,10 +50,6 @@ let activeAdapter = null;
 
 // ── DOM refs ──────────────────────────────────────────────────
 const mealTypeSelect  = document.getElementById('mealTypeSelect');
-const startCameraBtn  = document.getElementById('startCameraBtn');
-const stopCameraBtn   = document.getElementById('stopCameraBtn');
-const manualBarcode   = document.getElementById('manualBarcode');
-const manualScanBtn   = document.getElementById('manualScanBtn');
 const resultPanel     = document.getElementById('resultPanel');
 const resultOverlay   = document.getElementById('resultOverlay');
 const overlayCard     = document.getElementById('overlayCard');
@@ -65,11 +63,18 @@ const overlayClose    = document.getElementById('overlayClose');
 const overlayCountdown = document.getElementById('overlayCountdown');
 const statToday       = document.getElementById('statToday');
 const statLastScan    = document.getElementById('statLastScan');
-const cameraPlaceholder = document.getElementById('cameraPlaceholder');
-const cameraWrapper   = document.querySelector('.camera-wrapper');
+const staffPhotoPreview = document.getElementById('staffPhotoPreview');
+const staffPhotoPlaceholder = document.getElementById('staffPhotoPlaceholder');
 const settingsToggleBtn = document.getElementById('settingsToggleBtn');
 const settingsPanel = document.getElementById('settingsPanel');
 const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+const cancelLastBtn = document.getElementById('cancelLastBtn');
+const openDisplayBtn = document.getElementById('openDisplayBtn');
+const sessionPickerOverlay = document.getElementById('sessionPickerOverlay');
+const sessionMealButtons = document.getElementById('sessionMealButtons');
+const sessionMealChip = document.getElementById('sessionMealChip');
+const scanHistoryList = document.getElementById('scanHistoryList');
+let selectedSessionMealTypeId = null;
 
 // ── API yardımcı ──────────────────────────────────────────────
 async function apiFetch(path, options = {}) {
@@ -142,15 +147,41 @@ async function loadMealTypes() {
       opt.textContent = m.name;
       mealTypeSelect.appendChild(opt);
     });
+    renderSessionPicker(active);
   } catch (e) {
     mealTypeSelect.innerHTML = '<option value="">Yüklenemedi — API çalışıyor mu?</option>';
+    if (sessionMealButtons) {
+      sessionMealButtons.innerHTML = '<p class="text-danger">Yemek tipleri yüklenemedi.</p>';
+    }
   }
+}
+
+function renderSessionPicker(activeMealTypes) {
+  if (!sessionMealButtons || !sessionPickerOverlay) return;
+  sessionMealButtons.innerHTML = '';
+  if (!activeMealTypes.length) {
+    sessionMealButtons.innerHTML = '<p class="text-danger">Aktif yemek tipi bulunamadı.</p>';
+    return;
+  }
+  activeMealTypes.forEach((mt) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'session-meal-btn';
+    btn.textContent = mt.name;
+    btn.addEventListener('click', () => {
+      selectedSessionMealTypeId = Number(mt.id);
+      mealTypeSelect.value = String(mt.id);
+      sessionPickerOverlay.classList.add('hidden');
+      if (sessionMealChip) sessionMealChip.textContent = `Oturum: ${mt.name}`;
+    });
+    sessionMealButtons.appendChild(btn);
+  });
 }
 
 // ── Tarama işlemi ─────────────────────────────────────────────
 async function processBarcode(barcode) {
   if (isProcessing) return;
-  const meal_type_id = parseInt(mealTypeSelect.value, 10);
+  const meal_type_id = selectedSessionMealTypeId || parseInt(mealTypeSelect.value, 10);
 
   if (!meal_type_id) {
     showOverlay('warning', null, null, null, 'Lütfen önce bir yemek tipi seçin.');
@@ -172,12 +203,48 @@ async function processBarcode(barcode) {
       todayCount++;
       lastScanName = staff.full_name;
       updateStats();
+      updateProfilePreview(staff);
+      addHistoryRow({
+        ok: true,
+        usageLogId: Number(data.data?.usage_log_id || 0),
+        staffName: staff.full_name,
+        mealName: meal_type?.name || '',
+        message: data.message || 'Başarılı',
+        canceled: false,
+      });
       showOverlay('success', staff, meal_type, usage, null);
+      scanChannel.postMessage({
+        type: 'scan-success',
+        payload: {
+          staff,
+          meal_type,
+          usage,
+          message: data.message || 'Giriş başarılı.',
+        },
+      });
     } else {
       const staff    = data.data?.staff    || null;
       const mealType = data.data?.meal_type || null;
       const usage    = data.data?.usage     || null;
+      if (staff) updateProfilePreview(staff);
+      addHistoryRow({
+        ok: false,
+        usageLogId: 0,
+        staffName: staff?.full_name || 'Bilinmiyor',
+        mealName: mealType?.name || '',
+        message: data.error || 'Hata',
+        canceled: false,
+      });
       showOverlay('error', staff, mealType, usage, data.error || 'Bilinmeyen hata');
+      scanChannel.postMessage({
+        type: 'scan-error',
+        payload: {
+          staff,
+          meal_type: mealType,
+          usage,
+          message: data.error || 'İşlem başarısız.',
+        },
+      });
     }
   } catch (e) {
     if (runtimeSettings.offline_queue_enabled === 'true') {
@@ -190,6 +257,14 @@ async function processBarcode(barcode) {
     setTimeout(() => { isProcessing = false; }, 1500);
   }
 }
+
+scanChannel.onmessage = (ev) => {
+  const event = ev.data || {};
+  if (event.type !== 'scan-request') return;
+  const barcode = String(event.payload?.barcode || '').trim();
+  if (!barcode) return;
+  processBarcode(barcode);
+};
 
 async function loadSettingsPanel() {
   if (!user || user.role !== 'admin') return;
@@ -240,18 +315,99 @@ async function saveSettingsPanel() {
 function setupAdapter() {
   if (activeAdapter && typeof activeAdapter.stop === 'function') activeAdapter.stop();
   activeAdapter = null;
-  const mode = runtimeSettings.scanner_input_mode;
-  if (mode === 'network') {
-    activeAdapter = new window.ScannerAdapters.NetworkScannerAdapter(
-      (barcode) => processBarcode(barcode),
-      runtimeSettings.scanner_network_endpoint
-    );
-  } else if (mode === 'serial') {
-    activeAdapter = new window.ScannerAdapters.SerialScannerAdapter((barcode) => processBarcode(barcode));
-  } else if (mode === 'keyboard') {
+  if (runtimeSettings.scanner_input_mode === 'keyboard') {
     activeAdapter = new window.ScannerAdapters.KeyboardScannerAdapter((barcode) => processBarcode(barcode));
   }
   if (activeAdapter && typeof activeAdapter.start === 'function') activeAdapter.start();
+}
+
+function updateProfilePreview(staff) {
+  const photo = staff?.photo_url
+    ? (staff.photo_url.startsWith('/') ? `/proxy${staff.photo_url}` : staff.photo_url)
+    : null;
+  if (photo) {
+    staffPhotoPreview.src = photo;
+    staffPhotoPreview.classList.remove('hidden');
+    staffPhotoPlaceholder.classList.add('hidden');
+  } else {
+    staffPhotoPreview.classList.add('hidden');
+    staffPhotoPlaceholder.classList.remove('hidden');
+    staffPhotoPlaceholder.textContent = 'Profil resmi yok';
+  }
+}
+
+function addHistoryRow(item) {
+  scanHistory.unshift({
+    at: new Date(),
+    ...item,
+  });
+  if (scanHistory.length > 100) scanHistory.length = 100;
+  renderHistory();
+}
+
+function renderHistory() {
+  if (!scanHistoryList) return;
+  scanHistoryList.innerHTML = '';
+  if (!scanHistory.length) {
+    scanHistoryList.innerHTML = '<li class="scan-history-item muted">Henüz okutma yok.</li>';
+    return;
+  }
+  scanHistory.forEach((row) => {
+    const li = document.createElement('li');
+    li.className = `scan-history-item ${row.ok ? 'ok' : 'err'}`;
+    const canCancel = row.ok && !row.canceled && Number(row.usageLogId || 0) > 0;
+    li.innerHTML = `
+      <div class="scan-history-main">
+        <span class="scan-history-name">${row.staffName}</span>
+        <span class="scan-history-time">${row.at.toLocaleTimeString('tr-TR')}</span>
+      </div>
+      <div class="scan-history-sub">${row.mealName ? `${row.mealName} · ` : ''}${row.message}</div>
+      ${canCancel
+        ? `<button class="scan-history-cancel-btn" data-usage-id="${row.usageLogId}">İptal Et</button>`
+        : row.canceled
+          ? '<span class="scan-history-canceled">İptal edildi</span>'
+          : ''}
+    `;
+    scanHistoryList.appendChild(li);
+  });
+}
+
+async function cancelByUsageId(usageLogId) {
+  try {
+    const res = await apiFetch('/api/scan/cancel', {
+      method: 'POST',
+      body: JSON.stringify({ usage_log_id: Number(usageLogId) }),
+    });
+    if (!res.success) {
+      showOverlay('warning', null, null, null, res.error || 'İptal edilemedi.');
+      return;
+    }
+    const canceled = res.data?.canceled;
+    scanHistory.forEach((row) => {
+      if (Number(row.usageLogId) === Number(usageLogId)) {
+        row.canceled = true;
+        row.message = 'Operatör tarafından iptal edildi';
+      }
+    });
+    renderHistory();
+    const staff = canceled?.staff
+      ? {
+          id: canceled.staff.id,
+          full_name: canceled.staff.full_name,
+          department: canceled.staff.department,
+        }
+      : null;
+    showOverlay('warning', staff, null, null, res.message || 'İşlem iptal edildi.');
+    scanChannel.postMessage({
+      type: 'scan-error',
+      payload: {
+        staff,
+        message: 'Son işlem operatör tarafından iptal edildi.',
+      },
+    });
+  } catch {
+    showOverlay('warning', null, null, null, 'Sunucuya ulaşılamadı, işlem iptal edilemedi.');
+  }
 }
 
 // ── Overlay göster ────────────────────────────────────────────
@@ -281,22 +437,23 @@ function showOverlay(type, staff, mealType, usage, message) {
 
   // Kota bilgisi
   if (usage) {
-    const remaining = usage.monthly_remaining;
-    const quotaClass = remaining > 5 ? 'success' : remaining > 1 ? 'warning' : 'danger';
+    const balanceAfter = Number(usage.balance_after ?? 0);
+    const debitAmount = Number(usage.debit_amount ?? 1);
+    const quotaClass = balanceAfter > 50 ? 'success' : balanceAfter > 10 ? 'warning' : 'danger';
     overlayQuota.innerHTML = `
       <div class="quota-item">
-        <span class="quota-num">${usage.monthly_used}</span>
-        <span class="quota-lbl">Kullanılan</span>
+        <span class="quota-num">${Number(usage.balance_before ?? 0).toFixed(2)}</span>
+        <span class="quota-lbl">Önceki</span>
       </div>
       <div class="quota-divider"></div>
       <div class="quota-item">
-        <span class="quota-num ${quotaClass}">${usage.monthly_remaining}</span>
-        <span class="quota-lbl">Kalan</span>
+        <span class="quota-num">${debitAmount.toFixed(0)}</span>
+        <span class="quota-lbl">Düşüm</span>
       </div>
       <div class="quota-divider"></div>
       <div class="quota-item">
-        <span class="quota-num">${usage.monthly_quota}</span>
-        <span class="quota-lbl">Toplam</span>
+        <span class="quota-num ${quotaClass}">${balanceAfter.toFixed(2)}</span>
+        <span class="quota-lbl">Bakiye</span>
       </div>
     `;
     overlayQuota.style.display = 'flex';
@@ -327,8 +484,6 @@ function showOverlay(type, staff, mealType, usage, message) {
 function closeOverlay() {
   clearInterval(overlayTimer);
   resultOverlay.classList.add('hidden');
-  manualBarcode.value = '';
-  manualBarcode.focus();
 }
 
 overlayClose.addEventListener('click', closeOverlay);
@@ -344,107 +499,74 @@ function updateStats() {
     : lastScanName;
 }
 
-// ── Kamera ───────────────────────────────────────────────────
-startCameraBtn.addEventListener('click', startCamera);
-stopCameraBtn.addEventListener('click', stopCamera);
-
-async function startCamera() {
-  if (isCameraRunning) return;
-
-  const mealId = mealTypeSelect.value;
-  if (!mealId) {
-    alert('Lütfen önce bir yemek tipi seçin.');
-    return;
-  }
-
-  try {
-    html5QrCode = new Html5Qrcode('cameraPreview');
-
-    const config = {
-      fps: 10,
-      qrbox: { width: 200, height: 140 },
-      formatsToSupport: [
-        Html5QrcodeSupportedFormats.EAN_13,
-        Html5QrcodeSupportedFormats.EAN_8,
-        Html5QrcodeSupportedFormats.CODE_128,
-        Html5QrcodeSupportedFormats.CODE_39,
-        Html5QrcodeSupportedFormats.QR_CODE,
-        Html5QrcodeSupportedFormats.UPC_A,
-      ],
-    };
-
-    await html5QrCode.start(
-      { facingMode: 'environment' },
-      config,
-      (decodedText) => {
-        processBarcode(decodedText);
-      },
-      () => {} // hata sustur
-    );
-
-    isCameraRunning = true;
-    cameraPlaceholder.classList.add('hidden');
-    cameraWrapper.classList.add('scanning');
-    startCameraBtn.classList.add('hidden');
-    stopCameraBtn.classList.remove('hidden');
-
-  } catch (err) {
-    console.error(err);
-    alert('Kamera başlatılamadı: ' + (err.message || err));
-  }
-}
-
-async function stopCamera() {
-  if (!isCameraRunning || !html5QrCode) return;
-
-  try {
-    await html5QrCode.stop();
-    html5QrCode = null;
-  } catch (e) { /* sessiz */ }
-
-  isCameraRunning = false;
-  cameraPlaceholder.classList.remove('hidden');
-  cameraWrapper.classList.remove('scanning');
-  startCameraBtn.classList.remove('hidden');
-  stopCameraBtn.classList.add('hidden');
-}
-
-// ── Manuel giriş ──────────────────────────────────────────────
-manualScanBtn.addEventListener('click', () => {
-  const barcode = manualBarcode.value.trim();
-  if (!barcode) {
-    manualBarcode.focus();
-    return;
-  }
-  processBarcode(barcode);
+openDisplayBtn?.addEventListener('click', () => {
+  window.open('/scan-display', '_blank', 'noopener,noreferrer');
 });
 
-// Keyboard wedge okuyucu desteği
-manualBarcode.addEventListener('input', () => {
-  if (runtimeSettings.scanner_input_mode === 'keyboard' && manualBarcode.value.length >= 6) {
-    manualScanBtn.click();
+cancelLastBtn?.addEventListener('click', async () => {
+  try {
+    const meal_type_id = parseInt(mealTypeSelect.value, 10) || undefined;
+    const res = await apiFetch('/api/scan/cancel-last', {
+      method: 'POST',
+      body: JSON.stringify(meal_type_id ? { meal_type_id } : {}),
+    });
+    if (res.success) {
+      const staff = res.data?.canceled?.staff
+        ? {
+            id: res.data.canceled.staff.id,
+            full_name: res.data.canceled.staff.full_name,
+            department: res.data.canceled.staff.department,
+          }
+        : null;
+      showOverlay('warning', staff, null, null, res.message || 'Son işlem iptal edildi.');
+      scanChannel.postMessage({
+        type: 'scan-error',
+        payload: {
+          staff,
+          message: 'Son işlem operatör tarafından iptal edildi.',
+        },
+      });
+    } else {
+      showOverlay('warning', null, null, null, res.error || 'İptal edilemedi.');
+    }
+  } catch {
+    showOverlay('warning', null, null, null, 'Sunucuya ulaşılamadı, işlem iptal edilemedi.');
   }
 });
 
-manualBarcode.addEventListener('keydown', (e) => {
+scanHistoryList?.addEventListener('click', (e) => {
+  const target = e.target;
+  if (!(target instanceof HTMLElement)) return;
+  const usageId = target.getAttribute('data-usage-id');
+  if (!usageId) return;
+  cancelByUsageId(Number(usageId));
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
+  const tag = (e.target && e.target.tagName) || '';
+  if (tag === 'TEXTAREA') return;
+
   if (e.key === 'Enter') {
-    manualScanBtn.click();
+    if (keyboardBuffer.trim().length >= 4) {
+      processBarcode(keyboardBuffer.trim());
+    }
+    keyboardBuffer = '';
+    if (keyboardBufferTimer) clearTimeout(keyboardBufferTimer);
+    return;
+  }
+
+  if (e.key.length === 1) {
+    keyboardBuffer += e.key;
+    if (keyboardBuffer.length > 64) keyboardBuffer = keyboardBuffer.slice(-64);
+    if (keyboardBufferTimer) clearTimeout(keyboardBufferTimer);
+    keyboardBufferTimer = setTimeout(() => {
+      keyboardBuffer = '';
+    }, 220);
   }
 });
 
-// ── Yemek tipi değişince kamerayı yeniden başlat ──────────────
-mealTypeSelect.addEventListener('change', async () => {
-  if (isCameraRunning) {
-    await stopCamera();
-    await startCamera();
-  }
-});
-
-// ── Sayfa kapanırken kamerayı durdur ──────────────────────────
 window.addEventListener('beforeunload', () => {
-  if (isCameraRunning && html5QrCode) {
-    html5QrCode.stop().catch(() => {});
-  }
   if (activeAdapter && typeof activeAdapter.stop === 'function') activeAdapter.stop();
 });
 
@@ -475,3 +597,4 @@ updateStats();
 loadKioskDisplay();
 loadSettingsPanel();
 syncOfflineQueue();
+renderHistory();

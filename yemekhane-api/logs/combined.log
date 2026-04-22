@@ -649,3 +649,347 @@
 {"ip":"::1","level":"info","message":"GET /api/reports/staff/6","query":{"month":"4","year":"2026"},"service":"yemekhane-api","timestamp":"2026-04-22 00:16:07"}
 {"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 00:16:09"}
 {"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 00:16:09"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 13:46:19"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 13:46:19"}
+{"level":"info","message":"Monthly reset cron job scheduled (1st of each month at 00:01)","service":"yemekhane-api","timestamp":"2026-04-22 13:46:19"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 13:46:19"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 13:46:19"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 13:46:19"}
+{"ip":"::1","level":"info","message":"GET /api/settings/kiosk","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 13:48:36"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 13:48:36"}
+{"ip":"::1","level":"info","message":"POST /api/auth/login","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 13:48:44"}
+{"level":"error","message":"Unhandled error: Geçersiz kullanıcı adı veya şifre","method":"POST","path":"/api/auth/login","service":"yemekhane-api","stack":"Error: Geçersiz kullanıcı adı veya şifre\n    at Object.login (/Users/volkankoc/new_coding/cayeli_yemek_takip/yemekhane-api/src/modules/auth/auth.service.js:23:25)\n    at login (/Users/volkankoc/new_coding/cayeli_yemek_takip/yemekhane-api/src/modules/auth/auth.controller.js:11:32)\n    at Layer.handle [as handle_request] (/Users/volkankoc/new_coding/cayeli_yemek_takip/yemekhane-api/node_modules/express/lib/router/layer.js:95:5)\n    at next (/Users/volkankoc/new_coding/cayeli_yemek_takip/yemekhane-api/node_modules/express/lib/router/route.js:149:13)\n    at /Users/volkankoc/new_coding/cayeli_yemek_takip/yemekhane-api/src/middleware/validate.js:19:5\n    at Layer.handle [as handle_request] (/Users/volkankoc/new_coding/cayeli_yemek_takip/yemekhane-api/node_modules/express/lib/router/layer.js:95:5)\n    at next (/Users/volkankoc/new_coding/cayeli_yemek_takip/yemekhane-api/node_modules/express/lib/router/route.js:149:13)\n    at loginRateLimit (/Users/volkankoc/new_coding/cayeli_yemek_takip/yemekhane-api/src/middleware/loginRateLimit.js:28:3)\n    at Layer.handle [as handle_request] (/Users/volkankoc/new_coding/cayeli_yemek_takip/yemekhane-api/node_modules/express/lib/router/layer.js:95:5)\n    at next (/Users/volkankoc/new_coding/cayeli_yemek_takip/yemekhane-api/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/Users/volkankoc/new_coding/cayeli_yemek_takip/yemekhane-api/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/Users/volkankoc/new_coding/cayeli_yemek_takip/yemekhane-api/node_modules/express/lib/router/layer.js:95:5)\n    at /Users/volkankoc/new_coding/cayeli_yemek_takip/yemekhane-api/node_modules/express/lib/router/index.js:284:15\n    at Function.process_params (/Users/volkankoc/new_coding/cayeli_yemek_takip/yemekhane-api/node_modules/express/lib/router/index.js:346:12)\n    at next (/Users/volkankoc/new_coding/cayeli_yemek_takip/yemekhane-api/node_modules/express/lib/router/index.js:280:10)\n    at Function.handle (/Users/volkankoc/new_coding/cayeli_yemek_takip/yemekhane-api/node_modules/express/lib/router/index.js:175:3)","timestamp":"2026-04-22 13:48:44"}
+{"ip":"::1","level":"info","message":"POST /api/auth/login","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 13:48:48"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 13:48:48"}
+{"ip":"::1","level":"info","message":"GET /api/settings/kiosk","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 13:48:48"}
+{"ip":"::1","level":"info","message":"POST /api/auth/login","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 13:50:18"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 13:50:19"}
+{"ip":"::1","level":"info","message":"GET /api/reports/daily","query":{"date":"2026-04-22"},"service":"yemekhane-api","timestamp":"2026-04-22 13:50:19"}
+{"ip":"::1","level":"info","message":"GET /api/reports/monthly","query":{"month":"4","year":"2026"},"service":"yemekhane-api","timestamp":"2026-04-22 13:50:19"}
+{"ip":"::1","level":"info","message":"GET /api/staff","query":{"is_active":"1","limit":"1"},"service":"yemekhane-api","timestamp":"2026-04-22 13:50:19"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 13:50:19"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 13:50:20"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 13:50:20"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 13:50:20"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 13:52:08"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 13:52:08"}
+{"level":"info","message":"Monthly reset cron job scheduled (1st of each month at 00:01)","service":"yemekhane-api","timestamp":"2026-04-22 13:52:08"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 13:52:08"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 13:52:08"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 13:52:08"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 13:52:16"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 13:52:16"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 13:52:16"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 13:52:16"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 13:52:16"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 13:52:27"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 13:52:27"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 13:52:27"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 13:52:27"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 13:52:27"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 13:52:44"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 13:52:44"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 13:52:44"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 13:52:44"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 13:52:44"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 13:52:47"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 13:52:47"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 13:52:47"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 13:52:47"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 13:52:47"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 13:52:51"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 13:52:51"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 13:52:51"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 13:52:51"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 13:52:51"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 13:52:59"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 13:52:59"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 13:52:59"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 13:52:59"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 13:52:59"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 13:53:10"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 13:53:10"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 13:53:10"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 13:53:10"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 13:53:10"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 13:53:25"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 13:53:25"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 13:53:25"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 13:53:25"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 13:53:25"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 13:53:47"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 13:53:47"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 13:54:13"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 13:54:13"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 13:54:13"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 13:54:13"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 13:54:13"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 13:54:23"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 13:54:23"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 13:55:45"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 13:55:45"}
+{"ip":"::1","level":"info","message":"PUT /api/meal-types/6","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 13:55:59"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 13:55:59"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 13:58:08"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 13:58:08"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 13:58:08"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 13:58:08"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 13:58:08"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 13:58:11"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 13:58:11"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 13:58:11"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 13:58:11"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 13:58:11"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 13:58:16"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 13:58:16"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 13:58:16"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 13:58:16"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 13:58:16"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 13:58:20"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 13:58:20"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 13:58:20"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 13:58:20"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 13:58:20"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 13:58:36"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 13:58:36"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:08"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:08"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:11"}
+{"ip":"::1","level":"info","message":"GET /api/departments","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:11"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:11"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:12"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:12"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:20"}
+{"ip":"::1","level":"info","message":"GET /api/staff","query":{"limit":"25","page":"1"},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:20"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:20"}
+{"ip":"::1","level":"info","message":"POST /api/staff/6/topup","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:32"}
+{"ip":"::1","level":"info","message":"GET /api/staff","query":{"limit":"25","page":"1"},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:32"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:44"}
+{"ip":"::1","level":"info","message":"GET /api/users","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:44"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:44"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:51"}
+{"ip":"::1","level":"info","message":"GET /api/reports/daily","query":{"date":"2026-04-22"},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:51"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:51"}
+{"ip":"::1","level":"info","message":"GET /api/reports/monthly","query":{"month":"4","year":"2026"},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:51"}
+{"ip":"::1","level":"info","message":"GET /api/staff","query":{"is_active":"1","limit":"1"},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:51"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:52"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:00:52"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:01:00"}
+{"ip":"::1","level":"info","message":"GET /api/staff/6","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:01:00"}
+{"ip":"::1","level":"info","message":"GET /api/reports/staff/6","query":{"month":"4","year":"2026"},"service":"yemekhane-api","timestamp":"2026-04-22 14:01:00"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:01:00"}
+{"ip":"::1","level":"info","message":"PUT /api/staff/6","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:01:07"}
+{"ip":"::1","level":"info","message":"GET /api/staff/6","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:01:07"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:01:19"}
+{"ip":"::1","level":"info","message":"GET /api/departments","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:01:19"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:01:19"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:01:24"}
+{"ip":"::1","level":"info","message":"GET /api/staff/7","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:01:24"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:01:24"}
+{"ip":"::1","level":"info","message":"GET /api/reports/staff/7","query":{"month":"4","year":"2026"},"service":"yemekhane-api","timestamp":"2026-04-22 14:01:24"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:01:24"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:03:17"}
+{"ip":"::1","level":"info","message":"GET /api/staff/7","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:03:17"}
+{"ip":"::1","level":"info","message":"GET /api/departments","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:03:17"}
+{"ip":"::1","level":"info","message":"GET /api/reports/staff/7","query":{"month":"4","year":"2026"},"service":"yemekhane-api","timestamp":"2026-04-22 14:03:17"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:04:47"}
+{"ip":"::1","level":"info","message":"GET /api/staff/7","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:04:47"}
+{"ip":"::1","level":"info","message":"GET /api/departments","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:04:47"}
+{"ip":"::1","level":"info","message":"GET /api/reports/staff/7","query":{"month":"4","year":"2026"},"service":"yemekhane-api","timestamp":"2026-04-22 14:04:47"}
+{"ip":"::1","level":"info","message":"GET /api/staff/7","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:04:48"}
+{"ip":"::1","level":"info","message":"GET /api/reports/staff/7","query":{"month":"4","year":"2026"},"service":"yemekhane-api","timestamp":"2026-04-22 14:04:48"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:04:51"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:04:51"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:04:53"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:04:53"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:04:53"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:04:54"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:04:54"}
+{"ip":"::1","level":"info","message":"POST /api/departments","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:05:03"}
+{"ip":"::1","level":"info","message":"GET /api/departments","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:05:03"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:05:05"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:05:05"}
+{"ip":"::1","level":"info","message":"POST /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:05:11"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:05:11"}
+{"ip":"::1","level":"info","message":"POST /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:05:15"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:05:15"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:05:16"}
+{"ip":"::1","level":"info","message":"GET /api/staff","query":{"limit":"25","page":"1"},"service":"yemekhane-api","timestamp":"2026-04-22 14:05:16"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:05:16"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:05:21"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:05:21"}
+{"ip":"::1","level":"info","message":"GET /api/settings","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:05:21"}
+{"ip":"::1","level":"info","message":"POST /api/staff","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:05:57"}
+{"ip":"::1","level":"info","message":"PUT /api/staff/1/meal-rights","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:05:57"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:05:57"}
+{"ip":"::1","level":"info","message":"GET /api/staff","query":{"limit":"25","page":"1"},"service":"yemekhane-api","timestamp":"2026-04-22 14:05:57"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:05:57"}
+{"ip":"::1","level":"info","message":"POST /api/staff/1/topup","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:06:04"}
+{"ip":"::1","level":"info","message":"GET /api/staff","query":{"limit":"25","page":"1"},"service":"yemekhane-api","timestamp":"2026-04-22 14:06:04"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:06:06"}
+{"ip":"::1","level":"info","message":"GET /api/staff/1","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:06:06"}
+{"ip":"::1","level":"info","message":"GET /api/departments","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:06:06"}
+{"ip":"::1","level":"info","message":"GET /api/reports/staff/1","query":{"month":"4","year":"2026"},"service":"yemekhane-api","timestamp":"2026-04-22 14:06:06"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:06:06"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:06:16"}
+{"ip":"::1","level":"info","message":"GET /api/settings/kiosk","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:06:16"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:06:29"}
+{"ip":"::1","level":"info","message":"GET /api/settings/kiosk","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:06:29"}
+{"ip":"::1","level":"info","message":"GET /api/settings/kiosk","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:10:37"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:10:37"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:10:50"}
+{"ip":"::1","level":"info","message":"GET /api/settings/kiosk","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:10:50"}
+{"ip":"::1","level":"info","message":"POST /api/auth/login","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:10:56"}
+{"ip":"::1","level":"info","message":"GET /api/settings/kiosk","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:10:56"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:10:56"}
+{"ip":"::1","level":"info","message":"POST /api/scan","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:11:26"}
+{"level":"info","mealTypeId":1,"message":"Scan recorded: Staff 1 (VOLKAN KOÇ), Meal: ÖĞLE","service":"yemekhane-api","staffId":1,"timestamp":"2026-04-22 14:11:26","userId":4}
+{"ip":"::1","level":"info","message":"POST /api/scan","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:11:44"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:16:27"}
+{"ip":"::1","level":"info","message":"GET /api/reports/daily","query":{"date":"2026-04-22"},"service":"yemekhane-api","timestamp":"2026-04-22 14:16:27"}
+{"ip":"::1","level":"info","message":"GET /api/reports/monthly","query":{"month":"4","year":"2026"},"service":"yemekhane-api","timestamp":"2026-04-22 14:16:27"}
+{"ip":"::1","level":"info","message":"GET /api/staff","query":{"is_active":"1","limit":"1"},"service":"yemekhane-api","timestamp":"2026-04-22 14:16:27"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:16:27"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:16:28"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:16:28"}
+{"ip":"::1","level":"info","message":"GET /api/staff","query":{"limit":"25","page":"1"},"service":"yemekhane-api","timestamp":"2026-04-22 14:16:28"}
+{"ip":"::1","level":"info","message":"GET /api/departments","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:16:28"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:16:30"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:16:30"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:16:31"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:16:31"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:17:40"}
+{"ip":"::1","level":"info","message":"GET /api/staff","query":{"limit":"25","page":"1"},"service":"yemekhane-api","timestamp":"2026-04-22 14:17:40"}
+{"ip":"::1","level":"info","message":"GET /api/departments","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:17:40"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:18:06"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:18:06"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:18:08"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:18:08"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:18:08"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:18:11"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:18:11"}
+{"ip":"::1","level":"info","message":"GET /api/reports/daily","query":{"date":"2026-04-22"},"service":"yemekhane-api","timestamp":"2026-04-22 14:18:11"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:18:12"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:18:12"}
+{"ip":"::1","level":"info","message":"GET /api/reports/monthly","query":{"month":"4","year":"2026"},"service":"yemekhane-api","timestamp":"2026-04-22 14:18:12"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:18:14"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:18:14"}
+{"ip":"::1","level":"info","message":"GET /api/holidays","query":{"year":"2026"},"service":"yemekhane-api","timestamp":"2026-04-22 14:18:14"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 14:19:01"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 14:19:01"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 14:19:01"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 14:19:01"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 14:19:01"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 14:19:03"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 14:19:03"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 14:19:03"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 14:19:03"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 14:19:03"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:19:06"}
+{"ip":"::1","level":"info","message":"GET /api/holidays","query":{"year":"2026"},"service":"yemekhane-api","timestamp":"2026-04-22 14:19:06"}
+{"ip":"::1","level":"info","message":"GET /api/holidays","query":{"year":"2026"},"service":"yemekhane-api","timestamp":"2026-04-22 14:19:07"}
+{"ip":"::1","level":"info","message":"POST /api/auth/login","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:21:02"}
+{"ip":"::1","level":"info","message":"GET /api/reports/daily","query":{"date":"2026-04-22"},"service":"yemekhane-api","timestamp":"2026-04-22 14:21:03"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:21:03"}
+{"ip":"::1","level":"info","message":"GET /api/reports/monthly","query":{"month":"4","year":"2026"},"service":"yemekhane-api","timestamp":"2026-04-22 14:21:03"}
+{"ip":"::1","level":"info","message":"GET /api/staff","query":{"is_active":"1","limit":"1"},"service":"yemekhane-api","timestamp":"2026-04-22 14:21:03"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:21:03"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:21:04"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:21:04"}
+{"ip":"::1","level":"info","message":"GET /api/departments","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:21:04"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:21:06"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:21:06"}
+{"ip":"::1","level":"info","message":"GET /api/staff","query":{"limit":"25","page":"1"},"service":"yemekhane-api","timestamp":"2026-04-22 14:21:06"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:21:37"}
+{"ip":"::1","level":"info","message":"GET /api/settings/kiosk","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:21:37"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 14:27:13"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 14:27:13"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 14:27:13"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 14:27:13"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 14:27:13"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 14:27:17"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 14:27:17"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 14:27:17"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 14:27:17"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 14:27:17"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 14:27:40"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 14:27:40"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 14:27:40"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 14:27:40"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 14:27:40"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 14:27:52"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 14:27:52"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 14:27:52"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 14:27:52"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 14:27:52"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 14:28:54"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 14:28:54"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 14:28:54"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 14:28:54"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 14:28:54"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:29:02"}
+{"ip":"::1","level":"info","message":"GET /api/staff","query":{"limit":"25","page":"1"},"service":"yemekhane-api","timestamp":"2026-04-22 14:29:02"}
+{"ip":"::1","level":"info","message":"GET /api/departments","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:29:02"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:29:15"}
+{"ip":"::1","level":"info","message":"GET /api/reports/daily","query":{"date":"2026-04-22"},"service":"yemekhane-api","timestamp":"2026-04-22 14:29:15"}
+{"ip":"::1","level":"info","message":"GET /api/reports/monthly","query":{"month":"4","year":"2026"},"service":"yemekhane-api","timestamp":"2026-04-22 14:29:15"}
+{"ip":"::1","level":"info","message":"GET /api/staff","query":{"is_active":"1","limit":"1"},"service":"yemekhane-api","timestamp":"2026-04-22 14:29:15"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:29:15"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:29:17"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:29:17"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:29:19"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:29:19"}
+{"ip":"::1","level":"info","message":"POST /api/staff","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:29:46"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:29:46"}
+{"ip":"::1","level":"info","message":"GET /api/staff","query":{"limit":"25","page":"1"},"service":"yemekhane-api","timestamp":"2026-04-22 14:29:46"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:29:46"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:29:56"}
+{"ip":"::1","level":"info","message":"GET /api/settings/kiosk","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:29:56"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:33:33"}
+{"ip":"::1","level":"info","message":"GET /api/settings/kiosk","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:33:33"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:33:39"}
+{"ip":"::1","level":"info","message":"GET /api/staff","query":{"limit":"25","page":"1"},"service":"yemekhane-api","timestamp":"2026-04-22 14:33:39"}
+{"ip":"::1","level":"info","message":"GET /api/departments","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:33:39"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:36:35"}
+{"ip":"::1","level":"info","message":"GET /api/settings/kiosk","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:36:35"}
+{"ip":"::1","level":"info","message":"POST /api/scan","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:37:03"}
+{"level":"info","mealTypeId":1,"message":"Scan recorded: Staff 2 (Mehmet okuyan), Meal: ÖĞLE","service":"yemekhane-api","staffId":2,"timestamp":"2026-04-22 14:37:03","userId":4}
+{"ip":"::1","level":"info","message":"POST /api/scan","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:38:48"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:43:49"}
+{"ip":"::1","level":"info","message":"GET /api/staff/1","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:43:49"}
+{"ip":"::1","level":"info","message":"GET /api/departments","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:43:49"}
+{"ip":"::1","level":"info","message":"GET /api/reports/staff/1","query":{"month":"4","year":"2026"},"service":"yemekhane-api","timestamp":"2026-04-22 14:43:49"}
+{"ip":"::1","level":"info","message":"GET /api/version","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:43:49"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 14:45:17"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 14:45:17"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 14:45:17"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 14:45:17"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 14:45:17"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 14:45:24"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 14:45:24"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 14:45:24"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 14:45:24"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 14:45:24"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 14:45:28"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 14:45:28"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 14:45:28"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 14:45:28"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 14:45:28"}
+{"level":"info","message":"Running database migrations...","service":"yemekhane-api","timestamp":"2026-04-22 14:45:31"}
+{"level":"info","message":"Database migrations completed successfully.","service":"yemekhane-api","timestamp":"2026-04-22 14:45:31"}
+{"level":"info","message":"Günlük yedekleme cron zamanlandı (her saat :05, sunucu saati)","service":"yemekhane-api","timestamp":"2026-04-22 14:45:31"}
+{"level":"info","message":"Yemekhane API sunucusu 3000 portunda çalışıyor","service":"yemekhane-api","timestamp":"2026-04-22 14:45:31"}
+{"level":"info","message":"Ortam: development","service":"yemekhane-api","timestamp":"2026-04-22 14:45:31"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:47:49"}
+{"ip":"::1","level":"info","message":"GET /api/settings/kiosk","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:47:49"}
+{"ip":"::1","level":"info","message":"POST /api/scan","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:47:58"}
+{"ip":"::1","level":"info","message":"POST /api/scan/cancel-last","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:48:11"}
+{"ip":"::1","level":"info","message":"POST /api/scan/cancel-last","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:48:14"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:48:18"}
+{"ip":"::1","level":"info","message":"GET /api/settings/kiosk","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:48:18"}
+{"ip":"::1","level":"info","message":"POST /api/scan","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:48:26"}
+{"level":"info","mealTypeId":1,"message":"Scan recorded: Staff 1 (VOLKAN KOÇ), Meal: ÖĞLE","service":"yemekhane-api","staffId":1,"timestamp":"2026-04-22 14:48:26","userId":4}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:50:42"}
+{"ip":"::1","level":"info","message":"GET /api/settings/kiosk","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:50:42"}
+{"ip":"::1","level":"info","message":"GET /api/meal-types","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:54:45"}
+{"ip":"::1","level":"info","message":"GET /api/settings/kiosk","query":{},"service":"yemekhane-api","timestamp":"2026-04-22 14:54:45"}

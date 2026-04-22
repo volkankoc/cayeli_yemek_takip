@@ -48,6 +48,10 @@ app.get('/scan', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'scan.html'));
 });
 
+app.get('/scan-display', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'scan-display.html'));
+});
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });

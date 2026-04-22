@@ -66,6 +66,11 @@ export async function resetStaffMealRights(id: number): Promise<MealRight[]> {
   return res.data.data;
 }
 
+export async function topUpStaffBalance(id: number, amount: number, note = ""): Promise<StaffDetail> {
+  const res = await apiClient.post<ApiResponse<StaffDetail>>(`/staff/${id}/topup`, { amount, note });
+  return res.data.data;
+}
+
 export async function bulkImportStaff(staff: CreateStaffRequest[]): Promise<{ created: number; skipped: number; errors: Array<{ barcode: string; message: string }> }> {
   const res = await apiClient.post<ApiResponse<{ created: number; skipped: number; errors: Array<{ barcode: string; message: string }> }>>('/staff/bulk-import', { staff });
   return res.data.data;

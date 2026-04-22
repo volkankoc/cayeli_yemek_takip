@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yemekhane Takip — Karşı Ekran</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body class="scan-display-page">
+  <main class="display-shell">
+    <header class="display-header">
+      <h1>
+        <span class="display-title-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 7h2M19 7h2M3 12h2M19 12h2M3 17h2M19 17h2"/>
+            <rect x="7" y="5" width="10" height="14" rx="2"/>
+          </svg>
+        </span>
+        Giriş kartınızı okutunuz
+      </h1>
+      <p>Okutma sonrası sonucu bu ekranda göreceksiniz.</p>
+    </header>
+
+    <section class="display-input-wrap">
+      <div class="display-input-label">
+        <span class="display-label-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 6h1v12H4zM7 6h1v12H7zM11 6h2v12h-2zM15 6h1v12h-1zM18 6h2v12h-2z"/>
+          </svg>
+        </span>
+        Kart Barkodu
+      </div>
+      <input id="displayManualInput" class="display-input" type="text" placeholder="Kartınızı okuttuğunuzda numara burada görünür..." />
+      <p class="display-input-help">Barkodu yazıp Enter'a basın. İşlem gerçek tarama akışında yapılır ve sonuç anlık gösterilir.</p>
+    </section>
+
+    <div id="displayDialog" class="display-dialog hidden">
+      <div class="display-dialog-card" id="displayDialogCard">
+        <div class="display-dialog-icon" id="displayDialogIcon">✅</div>
+        <h2 id="displayDialogName">—</h2>
+        <p id="displayDialogDept">—</p>
+        <p id="displayDialogMeal">—</p>
+        <p id="displayDialogMessage">Giriş başarılı.</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="/scan-display.js"></script>
+</body>
+</html>

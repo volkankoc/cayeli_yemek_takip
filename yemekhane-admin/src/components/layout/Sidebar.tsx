@@ -10,7 +10,6 @@ import {
   Building2,
   UtensilsCrossed,
   BarChart3,
-  CalendarDays,
   Settings,
   UserCog,
   ClipboardList,
@@ -33,7 +32,6 @@ const menuItems = [
       { href: "/raporlar/yillik", label: "Yıllık Rapor" },
     ],
   },
-  { href: "/tatiller", label: "Tatiller", icon: CalendarDays },
 ];
 
 const adminItems = [

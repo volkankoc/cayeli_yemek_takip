@@ -30,4 +30,54 @@ function scan(req, res, next) {
   }
 }
 
-module.exports = { scan };
+function cancelLast(req, res, next) {
+  try {
+    const { meal_type_id } = req.body || {};
+    const result = scanService.cancelLastScan(req.user.id, meal_type_id);
+    const statusCode = result.statusCode;
+    delete result.statusCode;
+
+    if (result.success) {
+      return res.status(statusCode).json({
+        success: true,
+        data: result,
+        message: result.message,
+      });
+    }
+
+    return res.status(statusCode).json({
+      success: false,
+      error: result.message,
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+function cancelScan(req, res, next) {
+  try {
+    const { usage_log_id } = req.body;
+    const result = scanService.cancelScanByUsageId(req.user.id, usage_log_id);
+    const statusCode = result.statusCode;
+    delete result.statusCode;
+
+    if (result.success) {
+      return res.status(statusCode).json({
+        success: true,
+        data: result,
+        message: result.message,
+      });
+    }
+
+    return res.status(statusCode).json({
+      success: false,
+      error: result.message,
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { scan, cancelLast, cancelScan };

@@ -5,4 +5,12 @@ const scanSchema = z.object({
   meal_type_id: z.number().int().positive('Geçerli yemek tipi ID gerekli'),
 });
 
-module.exports = { scanSchema };
+const cancelLastScanSchema = z.object({
+  meal_type_id: z.number().int().positive('Geçerli yemek tipi ID gerekli').optional(),
+});
+
+const cancelScanSchema = z.object({
+  usage_log_id: z.number().int().positive('Geçerli okutma ID gerekli'),
+});
+
+module.exports = { scanSchema, cancelLastScanSchema, cancelScanSchema };

@@ -33,6 +33,8 @@ export interface Staff {
   department_id: number;
   department_name?: string;
   phone?: string | null;
+  balance?: number;
+  is_institutional?: number;
   photo_url: string | null;
   is_active: number;
   created_at: string;
@@ -50,6 +52,7 @@ export interface CreateStaffRequest {
   last_name: string;
   department_id: number;
   phone?: string;
+  is_institutional?: number;
 }
 
 export interface UpdateStaffRequest {
@@ -59,6 +62,7 @@ export interface UpdateStaffRequest {
   department_id?: number;
   phone?: string;
   is_active?: number;
+  is_institutional?: number;
 }
 
 // ===== Meal Type =====
@@ -106,20 +110,19 @@ export interface ScanResponse {
     full_name: string;
     photo_url: string | null;
     department: string;
+    is_institutional?: number;
   };
   meal_type: {
     id: number;
     name: string;
   };
   usage: {
-    monthly_used: number;
-    monthly_quota: number;
-    monthly_remaining: number;
+    balance_before: number;
+    balance_after: number;
+    debit_amount: number;
     daily_used: number;
     daily_limit: number;
   };
-  is_holiday: boolean;
-  holiday_name?: string;
 }
 
 // ===== Reports =====
@@ -201,14 +204,6 @@ export interface AuditLog {
   entity_type: string;
   entity_id: string | null;
   details: string | null;
-  created_at: string;
-}
-
-// ===== Holiday =====
-export interface Holiday {
-  id: number;
-  date: string;
-  description: string;
   created_at: string;
 }
 
