@@ -39,6 +39,11 @@ build/Release
 
 # Dependency directories
 node_modules/
+.git.backup-local/
+yemekhane-admin/.git.backup-local/
+yemekhane-admin/.agent/
+yemekhane-admin/.agents/
+yemekhane-admin/skills-lock.json
 jspm_packages/
 
 # Snowpack dependency directory (https://snowpack.dev/)
