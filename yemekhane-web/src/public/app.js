@@ -50,7 +50,6 @@ let activeAdapter = null;
 
 // ── DOM refs ──────────────────────────────────────────────────
 const mealTypeSelect  = document.getElementById('mealTypeSelect');
-const resultPanel     = document.getElementById('resultPanel');
 const resultOverlay   = document.getElementById('resultOverlay');
 const overlayCard     = document.getElementById('overlayCard');
 const overlayIcon     = document.getElementById('overlayIcon');
@@ -227,14 +226,6 @@ async function processBarcode(barcode) {
       const mealType = data.data?.meal_type || null;
       const usage    = data.data?.usage     || null;
       if (staff) updateProfilePreview(staff);
-      addHistoryRow({
-        ok: false,
-        usageLogId: 0,
-        staffName: staff?.full_name || 'Bilinmiyor',
-        mealName: mealType?.name || '',
-        message: data.error || 'Hata',
-        canceled: false,
-      });
       showOverlay('error', staff, mealType, usage, data.error || 'Bilinmeyen hata');
       scanChannel.postMessage({
         type: 'scan-error',
@@ -500,7 +491,8 @@ function updateStats() {
 }
 
 openDisplayBtn?.addEventListener('click', () => {
-  window.open('/scan-display', '_blank', 'noopener,noreferrer');
+  const displayTab = window.open('/scan-display', 'scanDisplayTab');
+  if (displayTab) displayTab.focus();
 });
 
 cancelLastBtn?.addEventListener('click', async () => {

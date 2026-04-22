@@ -21,7 +21,7 @@
     mealEl.textContent = payload.meal_type?.name ? `Öğün: ${payload.meal_type.name}` : '';
     msgEl.textContent = payload.message || 'Giriş başarılı.';
     dialog.classList.remove('hidden');
-    hideTimer = setTimeout(() => dialog.classList.add('hidden'), 3500);
+    hideTimer = setTimeout(() => dialog.classList.add('hidden'), 5000);
   }
 
   function showError(payload) {
@@ -34,7 +34,7 @@
     mealEl.textContent = payload.meal_type?.name ? `Öğün: ${payload.meal_type.name}` : '';
     msgEl.textContent = payload.message || 'Giriş başarısız.';
     dialog.classList.remove('hidden');
-    hideTimer = setTimeout(() => dialog.classList.add('hidden'), 2500);
+    hideTimer = setTimeout(() => dialog.classList.add('hidden'), 3500);
   }
 
   channel.onmessage = (ev) => {

@@ -19,13 +19,15 @@ function getSetting(key) {
  * @param {number} userId - The authenticated user who is scanning
  */
 function processScan(barcode, mealTypeId, userId) {
+  const normalizedBarcode = normalizeBarcode(barcode);
+
   // 1. Find staff by barcode
   const staff = db.prepare(`
     SELECT s.*, d.name as department_name
     FROM staff s
     LEFT JOIN departments d ON s.department_id = d.id
     WHERE s.barcode = ?
-  `).get(barcode);
+  `).get(normalizedBarcode);
 
   if (!staff) {
     metrics.inc('scan_failure_total');
@@ -320,6 +322,22 @@ function getDailyTotalUsage(staffId, date) {
     WHERE staff_id = ? AND date(used_at) = ?
   `).get(staffId, date);
   return result.count;
+}
+
+function normalizeBarcode(rawBarcode) {
+  const input = String(rawBarcode || '').trim();
+  if (!input) return '';
+
+  // Priority: use first 11-digit sequence (e.g. "12345678901 12345")
+  const directEleven = input.match(/\d{11}/);
+  if (directEleven) return directEleven[0];
+
+  // Fallback: collect digits and use first 11 if available.
+  const digitsOnly = input.replace(/\D/g, '');
+  if (digitsOnly.length >= 11) return digitsOnly.slice(0, 11);
+
+  // Final fallback for legacy/non-digit barcodes.
+  return input.split(/\s+/)[0];
 }
 
 /**
